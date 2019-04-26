@@ -1,0 +1,1178 @@
+; ModuleID = 'basic.cu'
+source_filename = "basic.cu"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+
+%struct.CUstream_st = type opaque
+%struct.cudaDeviceProp = type { [256 x i8], %struct.CUuuid_st, [8 x i8], i32, i64, i64, i32, i32, i64, i32, [3 x i32], [3 x i32], i32, i64, i32, i32, i64, i64, i32, i32, i32, i32, i32, i32, i32, i32, i32, [2 x i32], [2 x i32], [3 x i32], [2 x i32], [3 x i32], [3 x i32], i32, [2 x i32], [3 x i32], [2 x i32], i32, [2 x i32], [3 x i32], [2 x i32], [3 x i32], i32, [2 x i32], i64, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i64, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i64, i32, i32 }
+%struct.CUuuid_st = type { [16 x i8] }
+%struct.dim3 = type { i32, i32, i32 }
+
+$_ZN4dim3C2Ejjj = comdat any
+
+@.str = private unnamed_addr constant [5 x i8] c"-gpu\00", align 1
+@.str.1 = private unnamed_addr constant [5 x i8] c"-cpu\00", align 1
+@.str.2 = private unnamed_addr constant [5 x i8] c"-hdm\00", align 1
+@.str.3 = private unnamed_addr constant [4 x i8] c"-um\00", align 1
+@.str.4 = private unnamed_addr constant [17 x i8] c"No CUDA device.\0A\00", align 1
+@.str.5 = private unnamed_addr constant [32 x i8] c"GPU-%d : %s, C.C.%d.%d, U.M.%s\0A\00", align 1
+@.str.6 = private unnamed_addr constant [3 x i8] c"ON\00", align 1
+@.str.7 = private unnamed_addr constant [4 x i8] c"OFF\00", align 1
+@.str.8 = private unnamed_addr constant [41 x i8] c"nvector=%d nloop=%d %e(%e) %s[sec]=%.3f\0A\00", align 1
+@.str.9 = private unnamed_addr constant [4 x i8] c"GPU\00", align 1
+@.str.10 = private unnamed_addr constant [4 x i8] c"CPU\00", align 1
+
+; Function Attrs: noinline norecurse optnone uwtable
+define dso_local i32 @main(i32 %argc, i8** %argv) #0 {
+entry:
+  %retval = alloca i32, align 4
+  %argc.addr = alloca i32, align 4
+  %argv.addr = alloca i8**, align 8
+  %gpu = alloca i32, align 4
+  %um = alloca i32, align 4
+  %ngpu = alloca i32, align 4
+  %nvector = alloca i32, align 4
+  %nloop = alloca i32, align 4
+  %offset = alloca i32*, align 8
+  %length = alloca i32*, align 8
+  %size = alloca i64, align 8
+  %stream = alloca %struct.CUstream_st**, align 8
+  %ndevice = alloca i32, align 4
+  %igpu = alloca i32, align 4
+  %prop = alloca %struct.cudaDeviceProp, align 8
+  %h_a = alloca float*, align 8
+  %h_b = alloca float*, align 8
+  %h_c = alloca float*, align 8
+  %d_a = alloca float**, align 8
+  %d_b = alloca float**, align 8
+  %d_c = alloca float**, align 8
+  %igpu63 = alloca i32, align 4
+  %i = alloca i32, align 4
+  %igpu96 = alloca i32, align 4
+  %igpu117 = alloca i32, align 4
+  %t0 = alloca i64, align 8
+  %loop = alloca i32, align 4
+  %igpu132 = alloca i32, align 4
+  %block = alloca i32, align 4
+  %grid = alloca i32, align 4
+  %agg.tmp = alloca %struct.dim3, align 4
+  %agg.tmp140 = alloca %struct.dim3, align 4
+  %agg.tmp.coerce = alloca { i64, i32 }, align 4
+  %agg.tmp140.coerce = alloca { i64, i32 }, align 4
+  %igpu156 = alloca i32, align 4
+  %igpu168 = alloca i32, align 4
+  %igpu193 = alloca i32, align 4
+  %t1 = alloca i64, align 8
+  %igpu203 = alloca i32, align 4
+  %sum = alloca double, align 8
+  %i216 = alloca i32, align 4
+  %exact = alloca double, align 8
+  %sec = alloca double, align 8
+  %igpu236 = alloca i32, align 4
+  store i32 0, i32* %retval, align 4
+  store i32 %argc, i32* %argc.addr, align 4
+  store i8** %argv, i8*** %argv.addr, align 8
+  store i32 1, i32* %gpu, align 4
+  store i32 0, i32* %um, align 4
+  store i32 1, i32* %ngpu, align 4
+  store i32 1000, i32* %nvector, align 4
+  store i32 1000, i32* %nloop, align 4
+  br label %while.cond
+
+while.cond:                                       ; preds = %if.end38, %entry
+  %0 = load i32, i32* %argc.addr, align 4
+  %dec = add nsw i32 %0, -1
+  store i32 %dec, i32* %argc.addr, align 4
+  %tobool = icmp ne i32 %dec, 0
+  br i1 %tobool, label %while.body, label %while.end
+
+while.body:                                       ; preds = %while.cond
+  %1 = load i8**, i8*** %argv.addr, align 8
+  %incdec.ptr = getelementptr inbounds i8*, i8** %1, i32 1
+  store i8** %incdec.ptr, i8*** %argv.addr, align 8
+  %2 = load i8**, i8*** %argv.addr, align 8
+  %3 = load i8*, i8** %2, align 8
+  %call = call i32 @strcmp(i8* %3, i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str, i64 0, i64 0)) #8
+  %tobool1 = icmp ne i32 %call, 0
+  br i1 %tobool1, label %if.else, label %if.then
+
+if.then:                                          ; preds = %while.body
+  store i32 1, i32* %gpu, align 4
+  br label %if.end38
+
+if.else:                                          ; preds = %while.body
+  %4 = load i8**, i8*** %argv.addr, align 8
+  %5 = load i8*, i8** %4, align 8
+  %call2 = call i32 @strcmp(i8* %5, i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.1, i64 0, i64 0)) #8
+  %tobool3 = icmp ne i32 %call2, 0
+  br i1 %tobool3, label %if.else5, label %if.then4
+
+if.then4:                                         ; preds = %if.else
+  store i32 0, i32* %gpu, align 4
+  br label %if.end37
+
+if.else5:                                         ; preds = %if.else
+  %6 = load i8**, i8*** %argv.addr, align 8
+  %7 = load i8*, i8** %6, align 8
+  %call6 = call i32 @strcmp(i8* %7, i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.2, i64 0, i64 0)) #8
+  %tobool7 = icmp ne i32 %call6, 0
+  br i1 %tobool7, label %if.else9, label %if.then8
+
+if.then8:                                         ; preds = %if.else5
+  store i32 0, i32* %um, align 4
+  br label %if.end36
+
+if.else9:                                         ; preds = %if.else5
+  %8 = load i8**, i8*** %argv.addr, align 8
+  %9 = load i8*, i8** %8, align 8
+  %call10 = call i32 @strcmp(i8* %9, i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.3, i64 0, i64 0)) #8
+  %tobool11 = icmp ne i32 %call10, 0
+  br i1 %tobool11, label %if.else13, label %if.then12
+
+if.then12:                                        ; preds = %if.else9
+  store i32 1, i32* %um, align 4
+  br label %if.end35
+
+if.else13:                                        ; preds = %if.else9
+  %10 = load i32, i32* %argc.addr, align 4
+  %cmp = icmp eq i32 %10, 3
+  br i1 %cmp, label %if.then14, label %if.else18
+
+if.then14:                                        ; preds = %if.else13
+  %11 = load i8**, i8*** %argv.addr, align 8
+  %12 = load i8*, i8** %11, align 8
+  %call15 = call i32 @atoi(i8* %12) #8
+  store i32 %call15, i32* %ngpu, align 4
+  %13 = load i32, i32* %ngpu, align 4
+  %cmp16 = icmp slt i32 %13, 1
+  br i1 %cmp16, label %if.then17, label %if.end
+
+if.then17:                                        ; preds = %if.then14
+  store i32 1, i32* %ngpu, align 4
+  br label %if.end
+
+if.end:                                           ; preds = %if.then17, %if.then14
+  br label %if.end34
+
+if.else18:                                        ; preds = %if.else13
+  %14 = load i32, i32* %argc.addr, align 4
+  %cmp19 = icmp eq i32 %14, 2
+  br i1 %cmp19, label %if.then20, label %if.else25
+
+if.then20:                                        ; preds = %if.else18
+  %15 = load i8**, i8*** %argv.addr, align 8
+  %16 = load i8*, i8** %15, align 8
+  %call21 = call i32 @atoi(i8* %16) #8
+  store i32 %call21, i32* %nvector, align 4
+  %17 = load i32, i32* %nvector, align 4
+  %cmp22 = icmp slt i32 %17, 1
+  br i1 %cmp22, label %if.then23, label %if.end24
+
+if.then23:                                        ; preds = %if.then20
+  store i32 1, i32* %nvector, align 4
+  br label %if.end24
+
+if.end24:                                         ; preds = %if.then23, %if.then20
+  br label %if.end33
+
+if.else25:                                        ; preds = %if.else18
+  %18 = load i32, i32* %argc.addr, align 4
+  %cmp26 = icmp eq i32 %18, 1
+  br i1 %cmp26, label %if.then27, label %if.end32
+
+if.then27:                                        ; preds = %if.else25
+  %19 = load i8**, i8*** %argv.addr, align 8
+  %20 = load i8*, i8** %19, align 8
+  %call28 = call i32 @atoi(i8* %20) #8
+  store i32 %call28, i32* %nloop, align 4
+  %21 = load i32, i32* %nloop, align 4
+  %cmp29 = icmp slt i32 %21, 1
+  br i1 %cmp29, label %if.then30, label %if.end31
+
+if.then30:                                        ; preds = %if.then27
+  store i32 1, i32* %nloop, align 4
+  br label %if.end31
+
+if.end31:                                         ; preds = %if.then30, %if.then27
+  br label %if.end32
+
+if.end32:                                         ; preds = %if.end31, %if.else25
+  br label %if.end33
+
+if.end33:                                         ; preds = %if.end32, %if.end24
+  br label %if.end34
+
+if.end34:                                         ; preds = %if.end33, %if.end
+  br label %if.end35
+
+if.end35:                                         ; preds = %if.end34, %if.then12
+  br label %if.end36
+
+if.end36:                                         ; preds = %if.end35, %if.then8
+  br label %if.end37
+
+if.end37:                                         ; preds = %if.end36, %if.then4
+  br label %if.end38
+
+if.end38:                                         ; preds = %if.end37, %if.then
+  br label %while.cond
+
+while.end:                                        ; preds = %while.cond
+  %22 = load i32, i32* %gpu, align 4
+  %tobool39 = icmp ne i32 %22, 0
+  br i1 %tobool39, label %if.then40, label %if.end50
+
+if.then40:                                        ; preds = %while.end
+  %call41 = call i32 @cudaGetDeviceCount(i32* %ndevice)
+  %23 = load i32, i32* %ndevice, align 4
+  %cmp42 = icmp slt i32 %23, 1
+  br i1 %cmp42, label %if.then43, label %if.end45
+
+if.then43:                                        ; preds = %if.then40
+  %call44 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([17 x i8], [17 x i8]* @.str.4, i64 0, i64 0))
+  call void @exit(i32 1) #9
+  unreachable
+
+if.end45:                                         ; preds = %if.then40
+  store i32 0, i32* %igpu, align 4
+  br label %for.cond
+
+for.cond:                                         ; preds = %for.inc, %if.end45
+  %24 = load i32, i32* %igpu, align 4
+  %25 = load i32, i32* %ngpu, align 4
+  %cmp46 = icmp slt i32 %24, %25
+  br i1 %cmp46, label %for.body, label %for.end
+
+for.body:                                         ; preds = %for.cond
+  %26 = load i32, i32* %igpu, align 4
+  %call47 = call i32 @cudaGetDeviceProperties(%struct.cudaDeviceProp* %prop, i32 %26)
+  %27 = load i32, i32* %igpu, align 4
+  %name = getelementptr inbounds %struct.cudaDeviceProp, %struct.cudaDeviceProp* %prop, i32 0, i32 0
+  %arraydecay = getelementptr inbounds [256 x i8], [256 x i8]* %name, i64 0, i64 0
+  %major = getelementptr inbounds %struct.cudaDeviceProp, %struct.cudaDeviceProp* %prop, i32 0, i32 14
+  %28 = load i32, i32* %major, align 8
+  %minor = getelementptr inbounds %struct.cudaDeviceProp, %struct.cudaDeviceProp* %prop, i32 0, i32 15
+  %29 = load i32, i32* %minor, align 4
+  %30 = load i32, i32* %um, align 4
+  %tobool48 = icmp ne i32 %30, 0
+  %31 = zext i1 %tobool48 to i64
+  %cond = select i1 %tobool48, i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str.6, i64 0, i64 0), i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.7, i64 0, i64 0)
+  %call49 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([32 x i8], [32 x i8]* @.str.5, i64 0, i64 0), i32 %27, i8* %arraydecay, i32 %28, i32 %29, i8* %cond)
+  br label %for.inc
+
+for.inc:                                          ; preds = %for.body
+  %32 = load i32, i32* %igpu, align 4
+  %inc = add nsw i32 %32, 1
+  store i32 %inc, i32* %igpu, align 4
+  br label %for.cond
+
+for.end:                                          ; preds = %for.cond
+  br label %if.end50
+
+if.end50:                                         ; preds = %for.end, %while.end
+  %33 = load i32, i32* %nvector, align 4
+  %conv = sext i32 %33 to i64
+  %mul = mul i64 %conv, 4
+  store i64 %mul, i64* %size, align 8
+  %34 = load i64, i64* %size, align 8
+  %call51 = call noalias i8* @malloc(i64 %34) #10
+  %35 = bitcast i8* %call51 to float*
+  store float* %35, float** %h_a, align 8
+  %36 = load i64, i64* %size, align 8
+  %call52 = call noalias i8* @malloc(i64 %36) #10
+  %37 = bitcast i8* %call52 to float*
+  store float* %37, float** %h_b, align 8
+  %38 = load i64, i64* %size, align 8
+  %call53 = call noalias i8* @malloc(i64 %38) #10
+  %39 = bitcast i8* %call53 to float*
+  store float* %39, float** %h_c, align 8
+  %40 = load i32, i32* %ngpu, align 4
+  %conv54 = sext i32 %40 to i64
+  %mul55 = mul i64 %conv54, 4
+  store i64 %mul55, i64* %size, align 8
+  %41 = load i64, i64* %size, align 8
+  %call56 = call noalias i8* @malloc(i64 %41) #10
+  %42 = bitcast i8* %call56 to i32*
+  store i32* %42, i32** %offset, align 8
+  %43 = load i64, i64* %size, align 8
+  %call57 = call noalias i8* @malloc(i64 %43) #10
+  %44 = bitcast i8* %call57 to i32*
+  store i32* %44, i32** %length, align 8
+  %45 = load i32, i32* %nvector, align 4
+  %46 = load i32, i32* %ngpu, align 4
+  %47 = load i32*, i32** %offset, align 8
+  %48 = load i32*, i32** %length, align 8
+  call void @_ZL12divide_arrayiiPiS_(i32 %45, i32 %46, i32* %47, i32* %48)
+  %49 = load i32, i32* %ngpu, align 4
+  %conv58 = sext i32 %49 to i64
+  %mul59 = mul i64 %conv58, 8
+  store i64 %mul59, i64* %size, align 8
+  %50 = load i64, i64* %size, align 8
+  %call60 = call noalias i8* @malloc(i64 %50) #10
+  %51 = bitcast i8* %call60 to float**
+  store float** %51, float*** %d_a, align 8
+  %52 = load i64, i64* %size, align 8
+  %call61 = call noalias i8* @malloc(i64 %52) #10
+  %53 = bitcast i8* %call61 to float**
+  store float** %53, float*** %d_b, align 8
+  %54 = load i64, i64* %size, align 8
+  %call62 = call noalias i8* @malloc(i64 %54) #10
+  %55 = bitcast i8* %call62 to float**
+  store float** %55, float*** %d_c, align 8
+  store i32 0, i32* %igpu63, align 4
+  br label %for.cond64
+
+for.cond64:                                       ; preds = %for.inc79, %if.end50
+  %56 = load i32, i32* %igpu63, align 4
+  %57 = load i32, i32* %ngpu, align 4
+  %cmp65 = icmp slt i32 %56, %57
+  br i1 %cmp65, label %for.body66, label %for.end81
+
+for.body66:                                       ; preds = %for.cond64
+  %58 = load i32, i32* %gpu, align 4
+  %tobool67 = icmp ne i32 %58, 0
+  br i1 %tobool67, label %if.then68, label %if.end70
+
+if.then68:                                        ; preds = %for.body66
+  %59 = load i32, i32* %igpu63, align 4
+  %call69 = call i32 @cudaSetDevice(i32 %59)
+  br label %if.end70
+
+if.end70:                                         ; preds = %if.then68, %for.body66
+  %60 = load i32*, i32** %length, align 8
+  %61 = load i32, i32* %igpu63, align 4
+  %idxprom = sext i32 %61 to i64
+  %arrayidx = getelementptr inbounds i32, i32* %60, i64 %idxprom
+  %62 = load i32, i32* %arrayidx, align 4
+  %conv71 = sext i32 %62 to i64
+  %mul72 = mul i64 %conv71, 4
+  store i64 %mul72, i64* %size, align 8
+  %63 = load i32, i32* %gpu, align 4
+  %64 = load i32, i32* %um, align 4
+  %65 = load float**, float*** %d_a, align 8
+  %66 = load i32, i32* %igpu63, align 4
+  %idxprom73 = sext i32 %66 to i64
+  %arrayidx74 = getelementptr inbounds float*, float** %65, i64 %idxprom73
+  %67 = bitcast float** %arrayidx74 to i8**
+  %68 = load i64, i64* %size, align 8
+  call void @_Z11cuda_mallociiPPvm(i32 %63, i32 %64, i8** %67, i64 %68)
+  %69 = load i32, i32* %gpu, align 4
+  %70 = load i32, i32* %um, align 4
+  %71 = load float**, float*** %d_b, align 8
+  %72 = load i32, i32* %igpu63, align 4
+  %idxprom75 = sext i32 %72 to i64
+  %arrayidx76 = getelementptr inbounds float*, float** %71, i64 %idxprom75
+  %73 = bitcast float** %arrayidx76 to i8**
+  %74 = load i64, i64* %size, align 8
+  call void @_Z11cuda_mallociiPPvm(i32 %69, i32 %70, i8** %73, i64 %74)
+  %75 = load i32, i32* %gpu, align 4
+  %76 = load i32, i32* %um, align 4
+  %77 = load float**, float*** %d_c, align 8
+  %78 = load i32, i32* %igpu63, align 4
+  %idxprom77 = sext i32 %78 to i64
+  %arrayidx78 = getelementptr inbounds float*, float** %77, i64 %idxprom77
+  %79 = bitcast float** %arrayidx78 to i8**
+  %80 = load i64, i64* %size, align 8
+  call void @_Z11cuda_mallociiPPvm(i32 %75, i32 %76, i8** %79, i64 %80)
+  br label %for.inc79
+
+for.inc79:                                        ; preds = %if.end70
+  %81 = load i32, i32* %igpu63, align 4
+  %inc80 = add nsw i32 %81, 1
+  store i32 %inc80, i32* %igpu63, align 4
+  br label %for.cond64
+
+for.end81:                                        ; preds = %for.cond64
+  store i32 0, i32* %i, align 4
+  br label %for.cond82
+
+for.cond82:                                       ; preds = %for.inc93, %for.end81
+  %82 = load i32, i32* %i, align 4
+  %83 = load i32, i32* %nvector, align 4
+  %cmp83 = icmp slt i32 %82, %83
+  br i1 %cmp83, label %for.body84, label %for.end95
+
+for.body84:                                       ; preds = %for.cond82
+  %84 = load i32, i32* %i, align 4
+  %conv85 = sitofp i32 %84 to float
+  %85 = load float*, float** %h_a, align 8
+  %86 = load i32, i32* %i, align 4
+  %idxprom86 = sext i32 %86 to i64
+  %arrayidx87 = getelementptr inbounds float, float* %85, i64 %idxprom86
+  store float %conv85, float* %arrayidx87, align 4
+  %87 = load i32, i32* %i, align 4
+  %add = add nsw i32 %87, 1
+  %conv88 = sitofp i32 %add to float
+  %88 = load float*, float** %h_b, align 8
+  %89 = load i32, i32* %i, align 4
+  %idxprom89 = sext i32 %89 to i64
+  %arrayidx90 = getelementptr inbounds float, float* %88, i64 %idxprom89
+  store float %conv88, float* %arrayidx90, align 4
+  %90 = load float*, float** %h_c, align 8
+  %91 = load i32, i32* %i, align 4
+  %idxprom91 = sext i32 %91 to i64
+  %arrayidx92 = getelementptr inbounds float, float* %90, i64 %idxprom91
+  store float 0.000000e+00, float* %arrayidx92, align 4
+  br label %for.inc93
+
+for.inc93:                                        ; preds = %for.body84
+  %92 = load i32, i32* %i, align 4
+  %inc94 = add nsw i32 %92, 1
+  store i32 %inc94, i32* %i, align 4
+  br label %for.cond82
+
+for.end95:                                        ; preds = %for.cond82
+  store i32 0, i32* %igpu96, align 4
+  br label %for.cond97
+
+for.cond97:                                       ; preds = %for.inc114, %for.end95
+  %93 = load i32, i32* %igpu96, align 4
+  %94 = load i32, i32* %ngpu, align 4
+  %cmp98 = icmp slt i32 %93, %94
+  br i1 %cmp98, label %for.body99, label %for.end116
+
+for.body99:                                       ; preds = %for.cond97
+  %95 = load i32*, i32** %length, align 8
+  %96 = load i32, i32* %igpu96, align 4
+  %idxprom100 = sext i32 %96 to i64
+  %arrayidx101 = getelementptr inbounds i32, i32* %95, i64 %idxprom100
+  %97 = load i32, i32* %arrayidx101, align 4
+  %conv102 = sext i32 %97 to i64
+  %mul103 = mul i64 %conv102, 4
+  store i64 %mul103, i64* %size, align 8
+  %98 = load i32, i32* %gpu, align 4
+  %99 = load float**, float*** %d_a, align 8
+  %100 = load i32, i32* %igpu96, align 4
+  %idxprom104 = sext i32 %100 to i64
+  %arrayidx105 = getelementptr inbounds float*, float** %99, i64 %idxprom104
+  %101 = load float*, float** %arrayidx105, align 8
+  %102 = bitcast float* %101 to i8*
+  %103 = load float*, float** %h_a, align 8
+  %104 = load i32*, i32** %offset, align 8
+  %105 = load i32, i32* %igpu96, align 4
+  %idxprom106 = sext i32 %105 to i64
+  %arrayidx107 = getelementptr inbounds i32, i32* %104, i64 %idxprom106
+  %106 = load i32, i32* %arrayidx107, align 4
+  %idx.ext = sext i32 %106 to i64
+  %add.ptr = getelementptr inbounds float, float* %103, i64 %idx.ext
+  %107 = bitcast float* %add.ptr to i8*
+  %108 = load i64, i64* %size, align 8
+  call void @_Z11cuda_memcpyiPvPKvm14cudaMemcpyKind(i32 %98, i8* %102, i8* %107, i64 %108, i32 1)
+  %109 = load i32, i32* %gpu, align 4
+  %110 = load float**, float*** %d_b, align 8
+  %111 = load i32, i32* %igpu96, align 4
+  %idxprom108 = sext i32 %111 to i64
+  %arrayidx109 = getelementptr inbounds float*, float** %110, i64 %idxprom108
+  %112 = load float*, float** %arrayidx109, align 8
+  %113 = bitcast float* %112 to i8*
+  %114 = load float*, float** %h_b, align 8
+  %115 = load i32*, i32** %offset, align 8
+  %116 = load i32, i32* %igpu96, align 4
+  %idxprom110 = sext i32 %116 to i64
+  %arrayidx111 = getelementptr inbounds i32, i32* %115, i64 %idxprom110
+  %117 = load i32, i32* %arrayidx111, align 4
+  %idx.ext112 = sext i32 %117 to i64
+  %add.ptr113 = getelementptr inbounds float, float* %114, i64 %idx.ext112
+  %118 = bitcast float* %add.ptr113 to i8*
+  %119 = load i64, i64* %size, align 8
+  call void @_Z11cuda_memcpyiPvPKvm14cudaMemcpyKind(i32 %109, i8* %113, i8* %118, i64 %119, i32 1)
+  br label %for.inc114
+
+for.inc114:                                       ; preds = %for.body99
+  %120 = load i32, i32* %igpu96, align 4
+  %inc115 = add nsw i32 %120, 1
+  store i32 %inc115, i32* %igpu96, align 4
+  br label %for.cond97
+
+for.end116:                                       ; preds = %for.cond97
+  store i32 0, i32* %igpu117, align 4
+  br label %for.cond118
+
+for.cond118:                                      ; preds = %for.inc123, %for.end116
+  %121 = load i32, i32* %igpu117, align 4
+  %122 = load i32, i32* %ngpu, align 4
+  %cmp119 = icmp slt i32 %121, %122
+  br i1 %cmp119, label %for.body120, label %for.end125
+
+for.body120:                                      ; preds = %for.cond118
+  %123 = load i32, i32* %igpu117, align 4
+  %call121 = call i32 @cudaSetDevice(i32 %123)
+  %call122 = call i32 @cudaDeviceSynchronize()
+  br label %for.inc123
+
+for.inc123:                                       ; preds = %for.body120
+  %124 = load i32, i32* %igpu117, align 4
+  %inc124 = add nsw i32 %124, 1
+  store i32 %inc124, i32* %igpu117, align 4
+  br label %for.cond118
+
+for.end125:                                       ; preds = %for.cond118
+  %call126 = call i64 @clock() #10
+  store i64 %call126, i64* %t0, align 8
+  store i32 0, i32* %loop, align 4
+  br label %for.cond127
+
+for.cond127:                                      ; preds = %for.inc190, %for.end125
+  %125 = load i32, i32* %loop, align 4
+  %126 = load i32, i32* %nloop, align 4
+  %cmp128 = icmp slt i32 %125, %126
+  br i1 %cmp128, label %for.body129, label %for.end192
+
+for.body129:                                      ; preds = %for.cond127
+  %127 = load i32, i32* %gpu, align 4
+  %tobool130 = icmp ne i32 %127, 0
+  br i1 %tobool130, label %if.then131, label %if.else167
+
+if.then131:                                       ; preds = %for.body129
+  store i32 0, i32* %igpu132, align 4
+  br label %for.cond133
+
+for.cond133:                                      ; preds = %for.inc153, %if.then131
+  %128 = load i32, i32* %igpu132, align 4
+  %129 = load i32, i32* %ngpu, align 4
+  %cmp134 = icmp slt i32 %128, %129
+  br i1 %cmp134, label %for.body135, label %for.end155
+
+for.body135:                                      ; preds = %for.cond133
+  %130 = load i32, i32* %igpu132, align 4
+  %call136 = call i32 @cudaSetDevice(i32 %130)
+  store i32 256, i32* %block, align 4
+  %131 = load i32*, i32** %length, align 8
+  %132 = load i32, i32* %igpu132, align 4
+  %idxprom137 = sext i32 %132 to i64
+  %arrayidx138 = getelementptr inbounds i32, i32* %131, i64 %idxprom137
+  %133 = load i32, i32* %arrayidx138, align 4
+  %134 = load i32, i32* %block, align 4
+  %sub = sub nsw i32 %134, 1
+  %add139 = add nsw i32 %133, %sub
+  %135 = load i32, i32* %block, align 4
+  %div = sdiv i32 %add139, %135
+  store i32 %div, i32* %grid, align 4
+  %136 = load i32, i32* %grid, align 4
+  call void @_ZN4dim3C2Ejjj(%struct.dim3* %agg.tmp, i32 %136, i32 1, i32 1)
+  %137 = load i32, i32* %block, align 4
+  call void @_ZN4dim3C2Ejjj(%struct.dim3* %agg.tmp140, i32 %137, i32 1, i32 1)
+  %138 = load %struct.CUstream_st**, %struct.CUstream_st*** %stream, align 8
+  %139 = load i32, i32* %igpu132, align 4
+  %idxprom141 = sext i32 %139 to i64
+  %arrayidx142 = getelementptr inbounds %struct.CUstream_st*, %struct.CUstream_st** %138, i64 %idxprom141
+  %140 = load %struct.CUstream_st*, %struct.CUstream_st** %arrayidx142, align 8
+  %141 = bitcast %struct.CUstream_st* %140 to i8*
+  %142 = bitcast { i64, i32 }* %agg.tmp.coerce to i8*
+  %143 = bitcast %struct.dim3* %agg.tmp to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %142, i8* align 4 %143, i64 12, i1 false)
+  %144 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 0
+  %145 = load i64, i64* %144, align 4
+  %146 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 1
+  %147 = load i32, i32* %146, align 4
+  %148 = bitcast { i64, i32 }* %agg.tmp140.coerce to i8*
+  %149 = bitcast %struct.dim3* %agg.tmp140 to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %148, i8* align 4 %149, i64 12, i1 false)
+  %150 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp140.coerce, i32 0, i32 0
+  %151 = load i64, i64* %150, align 4
+  %152 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp140.coerce, i32 0, i32 1
+  %153 = load i32, i32* %152, align 4
+  %call143 = call i32 @__cudaPushCallConfiguration(i64 %145, i32 %147, i64 %151, i32 %153, i64 0, i8* %141)
+  %tobool144 = icmp ne i32 %call143, 0
+  br i1 %tobool144, label %kcall.end, label %kcall.configok
+
+kcall.configok:                                   ; preds = %for.body135
+  %154 = load i32*, i32** %length, align 8
+  %155 = load i32, i32* %igpu132, align 4
+  %idxprom145 = sext i32 %155 to i64
+  %arrayidx146 = getelementptr inbounds i32, i32* %154, i64 %idxprom145
+  %156 = load i32, i32* %arrayidx146, align 4
+  %157 = load float**, float*** %d_a, align 8
+  %158 = load i32, i32* %igpu132, align 4
+  %idxprom147 = sext i32 %158 to i64
+  %arrayidx148 = getelementptr inbounds float*, float** %157, i64 %idxprom147
+  %159 = load float*, float** %arrayidx148, align 8
+  %160 = load float**, float*** %d_b, align 8
+  %161 = load i32, i32* %igpu132, align 4
+  %idxprom149 = sext i32 %161 to i64
+  %arrayidx150 = getelementptr inbounds float*, float** %160, i64 %idxprom149
+  %162 = load float*, float** %arrayidx150, align 8
+  %163 = load float**, float*** %d_c, align 8
+  %164 = load i32, i32* %igpu132, align 4
+  %idxprom151 = sext i32 %164 to i64
+  %arrayidx152 = getelementptr inbounds float*, float** %163, i64 %idxprom151
+  %165 = load float*, float** %arrayidx152, align 8
+  call void @_ZL8vadd_gpuiPKfS0_Pf(i32 %156, float* %159, float* %162, float* %165)
+  br label %kcall.end
+
+kcall.end:                                        ; preds = %kcall.configok, %for.body135
+  br label %for.inc153
+
+for.inc153:                                       ; preds = %kcall.end
+  %166 = load i32, i32* %igpu132, align 4
+  %inc154 = add nsw i32 %166, 1
+  store i32 %inc154, i32* %igpu132, align 4
+  br label %for.cond133
+
+for.end155:                                       ; preds = %for.cond133
+  store i32 0, i32* %igpu156, align 4
+  br label %for.cond157
+
+for.cond157:                                      ; preds = %for.inc164, %for.end155
+  %167 = load i32, i32* %igpu156, align 4
+  %168 = load i32, i32* %ngpu, align 4
+  %cmp158 = icmp slt i32 %167, %168
+  br i1 %cmp158, label %for.body159, label %for.end166
+
+for.body159:                                      ; preds = %for.cond157
+  %169 = load i32, i32* %igpu156, align 4
+  %call160 = call i32 @cudaSetDevice(i32 %169)
+  %170 = load %struct.CUstream_st**, %struct.CUstream_st*** %stream, align 8
+  %171 = load i32, i32* %igpu156, align 4
+  %idxprom161 = sext i32 %171 to i64
+  %arrayidx162 = getelementptr inbounds %struct.CUstream_st*, %struct.CUstream_st** %170, i64 %idxprom161
+  %172 = load %struct.CUstream_st*, %struct.CUstream_st** %arrayidx162, align 8
+  %call163 = call i32 @cudaStreamSynchronize(%struct.CUstream_st* %172)
+  br label %for.inc164
+
+for.inc164:                                       ; preds = %for.body159
+  %173 = load i32, i32* %igpu156, align 4
+  %inc165 = add nsw i32 %173, 1
+  store i32 %inc165, i32* %igpu156, align 4
+  br label %for.cond157
+
+for.end166:                                       ; preds = %for.cond157
+  br label %if.end189
+
+if.else167:                                       ; preds = %for.body129
+  store i32 0, i32* %igpu168, align 4
+  br label %for.cond169
+
+for.cond169:                                      ; preds = %for.inc186, %if.else167
+  %174 = load i32, i32* %igpu168, align 4
+  %175 = load i32, i32* %ngpu, align 4
+  %cmp170 = icmp slt i32 %174, %175
+  br i1 %cmp170, label %for.body171, label %for.end188
+
+for.body171:                                      ; preds = %for.cond169
+  %176 = load i32*, i32** %length, align 8
+  %177 = load i32, i32* %igpu168, align 4
+  %idxprom172 = sext i32 %177 to i64
+  %arrayidx173 = getelementptr inbounds i32, i32* %176, i64 %idxprom172
+  %178 = load i32, i32* %arrayidx173, align 4
+  %179 = load float*, float** %h_a, align 8
+  %180 = load i32*, i32** %offset, align 8
+  %181 = load i32, i32* %igpu168, align 4
+  %idxprom174 = sext i32 %181 to i64
+  %arrayidx175 = getelementptr inbounds i32, i32* %180, i64 %idxprom174
+  %182 = load i32, i32* %arrayidx175, align 4
+  %idx.ext176 = sext i32 %182 to i64
+  %add.ptr177 = getelementptr inbounds float, float* %179, i64 %idx.ext176
+  %183 = load float*, float** %h_b, align 8
+  %184 = load i32*, i32** %offset, align 8
+  %185 = load i32, i32* %igpu168, align 4
+  %idxprom178 = sext i32 %185 to i64
+  %arrayidx179 = getelementptr inbounds i32, i32* %184, i64 %idxprom178
+  %186 = load i32, i32* %arrayidx179, align 4
+  %idx.ext180 = sext i32 %186 to i64
+  %add.ptr181 = getelementptr inbounds float, float* %183, i64 %idx.ext180
+  %187 = load float*, float** %h_c, align 8
+  %188 = load i32*, i32** %offset, align 8
+  %189 = load i32, i32* %igpu168, align 4
+  %idxprom182 = sext i32 %189 to i64
+  %arrayidx183 = getelementptr inbounds i32, i32* %188, i64 %idxprom182
+  %190 = load i32, i32* %arrayidx183, align 4
+  %idx.ext184 = sext i32 %190 to i64
+  %add.ptr185 = getelementptr inbounds float, float* %187, i64 %idx.ext184
+  call void @_ZL8vadd_cpuiPKfS0_Pf(i32 %178, float* %add.ptr177, float* %add.ptr181, float* %add.ptr185)
+  br label %for.inc186
+
+for.inc186:                                       ; preds = %for.body171
+  %191 = load i32, i32* %igpu168, align 4
+  %inc187 = add nsw i32 %191, 1
+  store i32 %inc187, i32* %igpu168, align 4
+  br label %for.cond169
+
+for.end188:                                       ; preds = %for.cond169
+  br label %if.end189
+
+if.end189:                                        ; preds = %for.end188, %for.end166
+  br label %for.inc190
+
+for.inc190:                                       ; preds = %if.end189
+  %192 = load i32, i32* %loop, align 4
+  %inc191 = add nsw i32 %192, 1
+  store i32 %inc191, i32* %loop, align 4
+  br label %for.cond127
+
+for.end192:                                       ; preds = %for.cond127
+  store i32 0, i32* %igpu193, align 4
+  br label %for.cond194
+
+for.cond194:                                      ; preds = %for.inc199, %for.end192
+  %193 = load i32, i32* %igpu193, align 4
+  %194 = load i32, i32* %ngpu, align 4
+  %cmp195 = icmp slt i32 %193, %194
+  br i1 %cmp195, label %for.body196, label %for.end201
+
+for.body196:                                      ; preds = %for.cond194
+  %195 = load i32, i32* %igpu193, align 4
+  %call197 = call i32 @cudaSetDevice(i32 %195)
+  %call198 = call i32 @cudaDeviceSynchronize()
+  br label %for.inc199
+
+for.inc199:                                       ; preds = %for.body196
+  %196 = load i32, i32* %igpu193, align 4
+  %inc200 = add nsw i32 %196, 1
+  store i32 %inc200, i32* %igpu193, align 4
+  br label %for.cond194
+
+for.end201:                                       ; preds = %for.cond194
+  %call202 = call i64 @clock() #10
+  store i64 %call202, i64* %t1, align 8
+  store i32 0, i32* %igpu203, align 4
+  br label %for.cond204
+
+for.cond204:                                      ; preds = %for.inc213, %for.end201
+  %197 = load i32, i32* %igpu203, align 4
+  %198 = load i32, i32* %ngpu, align 4
+  %cmp205 = icmp slt i32 %197, %198
+  br i1 %cmp205, label %for.body206, label %for.end215
+
+for.body206:                                      ; preds = %for.cond204
+  %199 = load i32, i32* %gpu, align 4
+  %200 = load float*, float** %h_c, align 8
+  %201 = load i32*, i32** %offset, align 8
+  %202 = load i32, i32* %igpu203, align 4
+  %idxprom207 = sext i32 %202 to i64
+  %arrayidx208 = getelementptr inbounds i32, i32* %201, i64 %idxprom207
+  %203 = load i32, i32* %arrayidx208, align 4
+  %idx.ext209 = sext i32 %203 to i64
+  %add.ptr210 = getelementptr inbounds float, float* %200, i64 %idx.ext209
+  %204 = bitcast float* %add.ptr210 to i8*
+  %205 = load float**, float*** %d_c, align 8
+  %206 = load i32, i32* %igpu203, align 4
+  %idxprom211 = sext i32 %206 to i64
+  %arrayidx212 = getelementptr inbounds float*, float** %205, i64 %idxprom211
+  %207 = load float*, float** %arrayidx212, align 8
+  %208 = bitcast float* %207 to i8*
+  %209 = load i64, i64* %size, align 8
+  call void @_Z11cuda_memcpyiPvPKvm14cudaMemcpyKind(i32 %199, i8* %204, i8* %208, i64 %209, i32 2)
+  br label %for.inc213
+
+for.inc213:                                       ; preds = %for.body206
+  %210 = load i32, i32* %igpu203, align 4
+  %inc214 = add nsw i32 %210, 1
+  store i32 %inc214, i32* %igpu203, align 4
+  br label %for.cond204
+
+for.end215:                                       ; preds = %for.cond204
+  store double 0.000000e+00, double* %sum, align 8
+  store i32 0, i32* %i216, align 4
+  br label %for.cond217
+
+for.cond217:                                      ; preds = %for.inc224, %for.end215
+  %211 = load i32, i32* %i216, align 4
+  %212 = load i32, i32* %nvector, align 4
+  %cmp218 = icmp slt i32 %211, %212
+  br i1 %cmp218, label %for.body219, label %for.end226
+
+for.body219:                                      ; preds = %for.cond217
+  %213 = load float*, float** %h_c, align 8
+  %214 = load i32, i32* %i216, align 4
+  %idxprom220 = sext i32 %214 to i64
+  %arrayidx221 = getelementptr inbounds float, float* %213, i64 %idxprom220
+  %215 = load float, float* %arrayidx221, align 4
+  %conv222 = fpext float %215 to double
+  %216 = load double, double* %sum, align 8
+  %add223 = fadd contract double %216, %conv222
+  store double %add223, double* %sum, align 8
+  br label %for.inc224
+
+for.inc224:                                       ; preds = %for.body219
+  %217 = load i32, i32* %i216, align 4
+  %inc225 = add nsw i32 %217, 1
+  store i32 %inc225, i32* %i216, align 4
+  br label %for.cond217
+
+for.end226:                                       ; preds = %for.cond217
+  %218 = load i32, i32* %nvector, align 4
+  %conv227 = sitofp i32 %218 to double
+  %219 = load i32, i32* %nvector, align 4
+  %conv228 = sitofp i32 %219 to double
+  %mul229 = fmul contract double %conv227, %conv228
+  store double %mul229, double* %exact, align 8
+  %220 = load i64, i64* %t1, align 8
+  %221 = load i64, i64* %t0, align 8
+  %sub230 = sub nsw i64 %220, %221
+  %conv231 = sitofp i64 %sub230 to double
+  %div232 = fdiv double %conv231, 1.000000e+06
+  store double %div232, double* %sec, align 8
+  %222 = load i32, i32* %nvector, align 4
+  %223 = load i32, i32* %nloop, align 4
+  %224 = load double, double* %sum, align 8
+  %225 = load double, double* %exact, align 8
+  %226 = load i32, i32* %gpu, align 4
+  %tobool233 = icmp ne i32 %226, 0
+  br i1 %tobool233, label %cond.true, label %cond.false
+
+cond.true:                                        ; preds = %for.end226
+  br label %cond.end
+
+cond.false:                                       ; preds = %for.end226
+  br label %cond.end
+
+cond.end:                                         ; preds = %cond.false, %cond.true
+  %cond-lvalue = phi [4 x i8]* [ @.str.9, %cond.true ], [ @.str.10, %cond.false ]
+  %arraydecay234 = getelementptr inbounds [4 x i8], [4 x i8]* %cond-lvalue, i64 0, i64 0
+  %227 = load double, double* %sec, align 8
+  %call235 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([41 x i8], [41 x i8]* @.str.8, i64 0, i64 0), i32 %222, i32 %223, double %224, double %225, i8* %arraydecay234, double %227)
+  store i32 0, i32* %igpu236, align 4
+  br label %for.cond237
+
+for.cond237:                                      ; preds = %for.inc246, %cond.end
+  %228 = load i32, i32* %igpu236, align 4
+  %229 = load i32, i32* %ngpu, align 4
+  %cmp238 = icmp slt i32 %228, %229
+  br i1 %cmp238, label %for.body239, label %for.end248
+
+for.body239:                                      ; preds = %for.cond237
+  %230 = load i32, i32* %gpu, align 4
+  %231 = load float**, float*** %d_a, align 8
+  %232 = load i32, i32* %igpu236, align 4
+  %idxprom240 = sext i32 %232 to i64
+  %arrayidx241 = getelementptr inbounds float*, float** %231, i64 %idxprom240
+  %233 = load float*, float** %arrayidx241, align 8
+  %234 = bitcast float* %233 to i8*
+  call void @_Z9cuda_freeiPv(i32 %230, i8* %234)
+  %235 = load i32, i32* %gpu, align 4
+  %236 = load float**, float*** %d_b, align 8
+  %237 = load i32, i32* %igpu236, align 4
+  %idxprom242 = sext i32 %237 to i64
+  %arrayidx243 = getelementptr inbounds float*, float** %236, i64 %idxprom242
+  %238 = load float*, float** %arrayidx243, align 8
+  %239 = bitcast float* %238 to i8*
+  call void @_Z9cuda_freeiPv(i32 %235, i8* %239)
+  %240 = load i32, i32* %gpu, align 4
+  %241 = load float**, float*** %d_c, align 8
+  %242 = load i32, i32* %igpu236, align 4
+  %idxprom244 = sext i32 %242 to i64
+  %arrayidx245 = getelementptr inbounds float*, float** %241, i64 %idxprom244
+  %243 = load float*, float** %arrayidx245, align 8
+  %244 = bitcast float* %243 to i8*
+  call void @_Z9cuda_freeiPv(i32 %240, i8* %244)
+  br label %for.inc246
+
+for.inc246:                                       ; preds = %for.body239
+  %245 = load i32, i32* %igpu236, align 4
+  %inc247 = add nsw i32 %245, 1
+  store i32 %inc247, i32* %igpu236, align 4
+  br label %for.cond237
+
+for.end248:                                       ; preds = %for.cond237
+  %246 = load float*, float** %h_a, align 8
+  %247 = bitcast float* %246 to i8*
+  call void @free(i8* %247) #10
+  %248 = load float*, float** %h_b, align 8
+  %249 = bitcast float* %248 to i8*
+  call void @free(i8* %249) #10
+  %250 = load float*, float** %h_c, align 8
+  %251 = bitcast float* %250 to i8*
+  call void @free(i8* %251) #10
+  %252 = load float**, float*** %d_a, align 8
+  %253 = bitcast float** %252 to i8*
+  call void @free(i8* %253) #10
+  %254 = load float**, float*** %d_b, align 8
+  %255 = bitcast float** %254 to i8*
+  call void @free(i8* %255) #10
+  %256 = load float**, float*** %d_c, align 8
+  %257 = bitcast float** %256 to i8*
+  call void @free(i8* %257) #10
+  %call249 = call i32 @cudaDeviceReset()
+  ret i32 0
+}
+
+; Function Attrs: nounwind readonly
+declare dso_local i32 @strcmp(i8*, i8*) #1
+
+; Function Attrs: nounwind readonly
+declare dso_local i32 @atoi(i8*) #1
+
+declare dso_local i32 @cudaGetDeviceCount(i32*) #2
+
+declare dso_local i32 @printf(i8*, ...) #2
+
+; Function Attrs: noreturn nounwind
+declare dso_local void @exit(i32) #3
+
+declare dso_local i32 @cudaGetDeviceProperties(%struct.cudaDeviceProp*, i32) #2
+
+; Function Attrs: nounwind
+declare dso_local noalias i8* @malloc(i64) #4
+
+; Function Attrs: noinline nounwind optnone uwtable
+define internal void @_ZL12divide_arrayiiPiS_(i32 %n, i32 %ndiv, i32* %offset, i32* %length) #5 {
+entry:
+  %n.addr = alloca i32, align 4
+  %ndiv.addr = alloca i32, align 4
+  %offset.addr = alloca i32*, align 8
+  %length.addr = alloca i32*, align 8
+  %l_n = alloca i32, align 4
+  %i = alloca i32, align 4
+  %istop = alloca i32, align 4
+  store i32 %n, i32* %n.addr, align 4
+  store i32 %ndiv, i32* %ndiv.addr, align 4
+  store i32* %offset, i32** %offset.addr, align 8
+  store i32* %length, i32** %length.addr, align 8
+  %0 = load i32, i32* %n.addr, align 4
+  %1 = load i32, i32* %ndiv.addr, align 4
+  %sub = sub nsw i32 %1, 1
+  %add = add nsw i32 %0, %sub
+  %2 = load i32, i32* %ndiv.addr, align 4
+  %div = sdiv i32 %add, %2
+  store i32 %div, i32* %l_n, align 4
+  store i32 0, i32* %i, align 4
+  br label %for.cond
+
+for.cond:                                         ; preds = %for.inc, %entry
+  %3 = load i32, i32* %i, align 4
+  %4 = load i32, i32* %ndiv.addr, align 4
+  %cmp = icmp slt i32 %3, %4
+  br i1 %cmp, label %for.body, label %for.end
+
+for.body:                                         ; preds = %for.cond
+  %5 = load i32, i32* %i, align 4
+  %6 = load i32, i32* %l_n, align 4
+  %mul = mul nsw i32 %5, %6
+  %7 = load i32*, i32** %offset.addr, align 8
+  %8 = load i32, i32* %i, align 4
+  %idxprom = sext i32 %8 to i64
+  %arrayidx = getelementptr inbounds i32, i32* %7, i64 %idxprom
+  store i32 %mul, i32* %arrayidx, align 4
+  %9 = load i32, i32* %i, align 4
+  %add1 = add nsw i32 %9, 1
+  %10 = load i32, i32* %l_n, align 4
+  %mul2 = mul nsw i32 %add1, %10
+  store i32 %mul2, i32* %istop, align 4
+  %11 = load i32, i32* %istop, align 4
+  %12 = load i32, i32* %n.addr, align 4
+  %cmp3 = icmp sgt i32 %11, %12
+  br i1 %cmp3, label %if.then, label %if.end
+
+if.then:                                          ; preds = %for.body
+  %13 = load i32, i32* %n.addr, align 4
+  store i32 %13, i32* %istop, align 4
+  br label %if.end
+
+if.end:                                           ; preds = %if.then, %for.body
+  %14 = load i32, i32* %istop, align 4
+  %15 = load i32*, i32** %offset.addr, align 8
+  %16 = load i32, i32* %i, align 4
+  %idxprom4 = sext i32 %16 to i64
+  %arrayidx5 = getelementptr inbounds i32, i32* %15, i64 %idxprom4
+  %17 = load i32, i32* %arrayidx5, align 4
+  %sub6 = sub nsw i32 %14, %17
+  %18 = load i32*, i32** %length.addr, align 8
+  %19 = load i32, i32* %i, align 4
+  %idxprom7 = sext i32 %19 to i64
+  %arrayidx8 = getelementptr inbounds i32, i32* %18, i64 %idxprom7
+  store i32 %sub6, i32* %arrayidx8, align 4
+  br label %for.inc
+
+for.inc:                                          ; preds = %if.end
+  %20 = load i32, i32* %i, align 4
+  %inc = add nsw i32 %20, 1
+  store i32 %inc, i32* %i, align 4
+  br label %for.cond
+
+for.end:                                          ; preds = %for.cond
+  ret void
+}
+
+declare dso_local i32 @cudaSetDevice(i32) #2
+
+declare dso_local void @_Z11cuda_mallociiPPvm(i32, i32, i8**, i64) #2
+
+declare dso_local void @_Z11cuda_memcpyiPvPKvm14cudaMemcpyKind(i32, i8*, i8*, i64, i32) #2
+
+declare dso_local i32 @cudaDeviceSynchronize() #2
+
+; Function Attrs: nounwind
+declare dso_local i64 @clock() #4
+
+declare dso_local i32 @__cudaPushCallConfiguration(i64, i32, i64, i32, i64, i8*) #2
+
+; Function Attrs: noinline nounwind optnone uwtable
+define linkonce_odr dso_local void @_ZN4dim3C2Ejjj(%struct.dim3* %this, i32 %vx, i32 %vy, i32 %vz) unnamed_addr #5 comdat align 2 {
+entry:
+  %this.addr = alloca %struct.dim3*, align 8
+  %vx.addr = alloca i32, align 4
+  %vy.addr = alloca i32, align 4
+  %vz.addr = alloca i32, align 4
+  store %struct.dim3* %this, %struct.dim3** %this.addr, align 8
+  store i32 %vx, i32* %vx.addr, align 4
+  store i32 %vy, i32* %vy.addr, align 4
+  store i32 %vz, i32* %vz.addr, align 4
+  %this1 = load %struct.dim3*, %struct.dim3** %this.addr, align 8
+  %x = getelementptr inbounds %struct.dim3, %struct.dim3* %this1, i32 0, i32 0
+  %0 = load i32, i32* %vx.addr, align 4
+  store i32 %0, i32* %x, align 4
+  %y = getelementptr inbounds %struct.dim3, %struct.dim3* %this1, i32 0, i32 1
+  %1 = load i32, i32* %vy.addr, align 4
+  store i32 %1, i32* %y, align 4
+  %z = getelementptr inbounds %struct.dim3, %struct.dim3* %this1, i32 0, i32 2
+  %2 = load i32, i32* %vz.addr, align 4
+  store i32 %2, i32* %z, align 4
+  ret void
+}
+
+; Function Attrs: argmemonly nounwind
+declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture writeonly, i8* nocapture readonly, i64, i1 immarg) #6
+
+; Function Attrs: noinline optnone uwtable
+define internal void @_ZL8vadd_gpuiPKfS0_Pf(i32 %n, float* %a, float* %b, float* %c) #7 {
+entry:
+  %n.addr = alloca i32, align 4
+  %a.addr = alloca float*, align 8
+  %b.addr = alloca float*, align 8
+  %c.addr = alloca float*, align 8
+  %grid_dim = alloca %struct.dim3, align 8
+  %block_dim = alloca %struct.dim3, align 8
+  %shmem_size = alloca i64, align 8
+  %stream = alloca i8*, align 8
+  %grid_dim.coerce = alloca { i64, i32 }, align 8
+  %block_dim.coerce = alloca { i64, i32 }, align 8
+  store i32 %n, i32* %n.addr, align 4
+  store float* %a, float** %a.addr, align 8
+  store float* %b, float** %b.addr, align 8
+  store float* %c, float** %c.addr, align 8
+  %kernel_args = alloca i8*, i64 4, align 16
+  %0 = bitcast i32* %n.addr to i8*
+  %1 = getelementptr i8*, i8** %kernel_args, i32 0
+  store i8* %0, i8** %1
+  %2 = bitcast float** %a.addr to i8*
+  %3 = getelementptr i8*, i8** %kernel_args, i32 1
+  store i8* %2, i8** %3
+  %4 = bitcast float** %b.addr to i8*
+  %5 = getelementptr i8*, i8** %kernel_args, i32 2
+  store i8* %4, i8** %5
+  %6 = bitcast float** %c.addr to i8*
+  %7 = getelementptr i8*, i8** %kernel_args, i32 3
+  store i8* %6, i8** %7
+  %8 = call i32 @__cudaPopCallConfiguration(%struct.dim3* %grid_dim, %struct.dim3* %block_dim, i64* %shmem_size, i8** %stream)
+  %9 = load i64, i64* %shmem_size, align 8
+  %10 = load i8*, i8** %stream, align 8
+  %11 = bitcast { i64, i32 }* %grid_dim.coerce to i8*
+  %12 = bitcast %struct.dim3* %grid_dim to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %11, i8* align 8 %12, i64 12, i1 false)
+  %13 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %grid_dim.coerce, i32 0, i32 0
+  %14 = load i64, i64* %13, align 8
+  %15 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %grid_dim.coerce, i32 0, i32 1
+  %16 = load i32, i32* %15, align 8
+  %17 = bitcast { i64, i32 }* %block_dim.coerce to i8*
+  %18 = bitcast %struct.dim3* %block_dim to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %17, i8* align 8 %18, i64 12, i1 false)
+  %19 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %block_dim.coerce, i32 0, i32 0
+  %20 = load i64, i64* %19, align 8
+  %21 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %block_dim.coerce, i32 0, i32 1
+  %22 = load i32, i32* %21, align 8
+  %23 = bitcast i8* %10 to %struct.CUstream_st*
+  %call = call i32 @cudaLaunchKernel(i8* bitcast (void (i32, float*, float*, float*)* @_ZL8vadd_gpuiPKfS0_Pf to i8*), i64 %14, i32 %16, i64 %20, i32 %22, i8** %kernel_args, i64 %9, %struct.CUstream_st* %23)
+  br label %setup.end
+
+setup.end:                                        ; preds = %entry
+  ret void
+}
+
+declare dso_local i32 @cudaStreamSynchronize(%struct.CUstream_st*) #2
+
+; Function Attrs: noinline optnone uwtable
+define internal void @_ZL8vadd_cpuiPKfS0_Pf(i32 %n, float* %a, float* %b, float* %c) #7 {
+entry:
+  %n.addr = alloca i32, align 4
+  %a.addr = alloca float*, align 8
+  %b.addr = alloca float*, align 8
+  %c.addr = alloca float*, align 8
+  %i = alloca i32, align 4
+  store i32 %n, i32* %n.addr, align 4
+  store float* %a, float** %a.addr, align 8
+  store float* %b, float** %b.addr, align 8
+  store float* %c, float** %c.addr, align 8
+  store i32 0, i32* %i, align 4
+  br label %for.cond
+
+for.cond:                                         ; preds = %for.inc, %entry
+  %0 = load i32, i32* %i, align 4
+  %1 = load i32, i32* %n.addr, align 4
+  %cmp = icmp slt i32 %0, %1
+  br i1 %cmp, label %for.body, label %for.end
+
+for.body:                                         ; preds = %for.cond
+  %2 = load float*, float** %a.addr, align 8
+  %3 = load i32, i32* %i, align 4
+  %idxprom = sext i32 %3 to i64
+  %arrayidx = getelementptr inbounds float, float* %2, i64 %idxprom
+  %4 = load float, float* %arrayidx, align 4
+  %5 = load float*, float** %b.addr, align 8
+  %6 = load i32, i32* %i, align 4
+  %idxprom1 = sext i32 %6 to i64
+  %arrayidx2 = getelementptr inbounds float, float* %5, i64 %idxprom1
+  %7 = load float, float* %arrayidx2, align 4
+  %8 = load float*, float** %c.addr, align 8
+  %9 = load i32, i32* %i, align 4
+  %idxprom3 = sext i32 %9 to i64
+  %arrayidx4 = getelementptr inbounds float, float* %8, i64 %idxprom3
+  call void @_ZL9vadd_calcffPf(float %4, float %7, float* %arrayidx4)
+  br label %for.inc
+
+for.inc:                                          ; preds = %for.body
+  %10 = load i32, i32* %i, align 4
+  %inc = add nsw i32 %10, 1
+  store i32 %inc, i32* %i, align 4
+  br label %for.cond
+
+for.end:                                          ; preds = %for.cond
+  ret void
+}
+
+declare dso_local void @_Z9cuda_freeiPv(i32, i8*) #2
+
+; Function Attrs: nounwind
+declare dso_local void @free(i8*) #4
+
+declare dso_local i32 @cudaDeviceReset() #2
+
+declare dso_local i32 @__cudaPopCallConfiguration(%struct.dim3*, %struct.dim3*, i64*, i8**)
+
+declare dso_local i32 @cudaLaunchKernel(i8*, i64, i32, i64, i32, i8**, i64, %struct.CUstream_st*)
+
+; Function Attrs: noinline nounwind optnone uwtable
+define internal void @_ZL9vadd_calcffPf(float %a, float %b, float* %c) #5 {
+entry:
+  %a.addr = alloca float, align 4
+  %b.addr = alloca float, align 4
+  %c.addr = alloca float*, align 8
+  store float %a, float* %a.addr, align 4
+  store float %b, float* %b.addr, align 4
+  store float* %c, float** %c.addr, align 8
+  %0 = load float, float* %a.addr, align 4
+  %1 = load float, float* %b.addr, align 4
+  %add = fadd contract float %0, %1
+  %2 = load float*, float** %c.addr, align 8
+  store float %add, float* %2, align 4
+  ret void
+}
+
+attributes #0 = { noinline norecurse optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { nounwind readonly "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #2 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #3 = { noreturn nounwind "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #4 = { nounwind "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #5 = { noinline nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #6 = { argmemonly nounwind }
+attributes #7 = { noinline optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #8 = { nounwind readonly }
+attributes #9 = { noreturn nounwind }
+attributes #10 = { nounwind }
+
+!llvm.module.flags = !{!0, !1}
+!llvm.ident = !{!2}
+
+!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 10, i32 1]}
+!1 = !{i32 1, !"wchar_size", i32 4}
+!2 = !{!"clang version 9.0.0 (https://github.com/llvm/llvm-project.git 9e441aee509f8a4d1c6a42b3da6ab9869e777051)"}

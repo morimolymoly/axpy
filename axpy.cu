@@ -5,7 +5,7 @@ __global__ void axpy(float a, float* x, float* y) {
 }
 
 int main(int argc, char* argv[]) {
-  const int kDataLen = 4;
+  const int kDataLen = 100000;
 
   float a = 2.0f;
   float host_x[kDataLen] = {1.0f, 2.0f, 3.0f, 4.0f};

@@ -1,0 +1,20 @@
+../../llvm/llvm-project/build/bin/clang++ -ccc-print-phases basic.cu -o basic --cuda-gpu-arch=sm_35 -L/usr/local/cuda/lib64 -lcudart_static -ldl -lrt -pthread
+
+0: input, "basic.cu", cuda, (host-cuda)
+1: preprocessor, {0}, cuda-cpp-output, (host-cuda)
+2: compiler, {1}, ir, (host-cuda)
+3: input, "basic.cu", cuda, (device-cuda, sm_35)
+4: preprocessor, {3}, cuda-cpp-output, (device-cuda, sm_35)
+5: compiler, {4}, ir, (device-cuda, sm_35)
+6: backend, {5}, assembler, (device-cuda, sm_35)
+7: assembler, {6}, object, (device-cuda, sm_35)
+8: offload, "device-cuda (nvptx64-nvidia-cuda:sm_35)" {7}, object
+9: offload, "device-cuda (nvptx64-nvidia-cuda:sm_35)" {6}, assembler
+10: linker, {8, 9}, cuda-fatbin, (device-cuda)
+11: offload, "host-cuda (x86_64-unknown-linux-gnu)" {2}, "device-cuda (nvptx64-nvidia-cuda)" {10}, ir
+12: backend, {11}, assembler, (host-cuda)
+13: assembler, {12}, object, (host-cuda)
+14: input, "cudart_static", object, (host-cuda)
+15: input, "dl", object, (host-cuda)
+16: input, "rt", object, (host-cuda)
+17: linker, {13, 14, 15, 16}, image, (host-cuda)
