@@ -26,7 +26,6 @@ $_ZN4dim3C2Ejjj = comdat any
 
 @_ZStL8__ioinit = internal global %"class.std::ios_base::Init" zeroinitializer, align 1
 @__dso_handle = external hidden global i8
-@__const.main.host_x = private unnamed_addr constant [4 x float] [float 1.000000e+00, float 2.000000e+00, float 3.000000e+00, float 4.000000e+00], align 16
 @_ZSt4cout = external dso_local global %"class.std::basic_ostream", align 8
 @.str = private unnamed_addr constant [3 x i8] c"y[\00", align 1
 @.str.1 = private unnamed_addr constant [5 x i8] c"] = \00", align 1
@@ -48,8 +47,16 @@ declare dso_local void @_ZNSt8ios_base4InitD1Ev(%"class.std::ios_base::Init"*) u
 ; Function Attrs: nounwind
 declare dso_local i32 @__cxa_atexit(void (i8*)*, i8*, i8*) #2
 
+; Function Attrs: alwaysinline nounwind uwtable
+define dso_local void @_Z4testv() #3 {
+entry:
+  %a = alloca i32, align 4
+  store i32 30, i32* %a, align 4
+  ret void
+}
+
 ; Function Attrs: noinline optnone uwtable
-define dso_local void @_Z4axpyfPfS_(float %a, float* %x, float* %y) #3 {
+define dso_local void @_Z4axpyfPfS_(float %a, float* %x, float* %y) #4 {
 entry:
   %a.addr = alloca float, align 4
   %x.addr = alloca float*, align 8
@@ -103,18 +110,19 @@ declare dso_local i32 @__cudaPopCallConfiguration(%struct.dim3*, %struct.dim3*, 
 declare dso_local i32 @cudaLaunchKernel(i8*, i64, i32, i64, i32, i8**, i64, %struct.CUstream_st*)
 
 ; Function Attrs: argmemonly nounwind
-declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture writeonly, i8* nocapture readonly, i64, i1 immarg) #4
+declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture writeonly, i8* nocapture readonly, i64, i1 immarg) #5
 
 ; Function Attrs: noinline norecurse optnone uwtable
-define dso_local i32 @main(i32 %argc, i8** %argv) #5 {
+define dso_local i32 @main(i32 %argc, i8** %argv) #6 {
 entry:
+  %a.i = alloca i32, align 4
   %retval = alloca i32, align 4
   %argc.addr = alloca i32, align 4
   %argv.addr = alloca i8**, align 8
   %kDataLen = alloca i32, align 4
   %a = alloca float, align 4
-  %host_x = alloca [4 x float], align 16
-  %host_y = alloca [4 x float], align 16
+  %host_x = alloca [100000 x float], align 16
+  %host_y = alloca [100000 x float], align 16
   %device_x = alloca float*, align 8
   %device_y = alloca float*, align 8
   %agg.tmp = alloca %struct.dim3, align 4
@@ -125,75 +133,85 @@ entry:
   store i32 0, i32* %retval, align 4
   store i32 %argc, i32* %argc.addr, align 4
   store i8** %argv, i8*** %argv.addr, align 8
-  store i32 4, i32* %kDataLen, align 4
+  store i32 30, i32* %a.i, align 4
+  store i32 100000, i32* %kDataLen, align 4
   store float 2.000000e+00, float* %a, align 4
-  %0 = bitcast [4 x float]* %host_x to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 16 %0, i8* align 16 bitcast ([4 x float]* @__const.main.host_x to i8*), i64 16, i1 false)
-  %call = call i32 @_ZL10cudaMallocIfE9cudaErrorPPT_m(float** %device_x, i64 16)
-  %call1 = call i32 @_ZL10cudaMallocIfE9cudaErrorPPT_m(float** %device_y, i64 16)
-  %1 = load float*, float** %device_x, align 8
-  %2 = bitcast float* %1 to i8*
-  %arraydecay = getelementptr inbounds [4 x float], [4 x float]* %host_x, i64 0, i64 0
-  %3 = bitcast float* %arraydecay to i8*
-  %call2 = call i32 @cudaMemcpy(i8* %2, i8* %3, i64 16, i32 1)
+  %0 = bitcast [100000 x float]* %host_x to i8*
+  call void @llvm.memset.p0i8.i64(i8* align 16 %0, i8 0, i64 400000, i1 false)
+  %1 = bitcast i8* %0 to <{ float, float, float, float, [99996 x float] }>*
+  %2 = getelementptr inbounds <{ float, float, float, float, [99996 x float] }>, <{ float, float, float, float, [99996 x float] }>* %1, i32 0, i32 0
+  store float 1.000000e+00, float* %2, align 16
+  %3 = getelementptr inbounds <{ float, float, float, float, [99996 x float] }>, <{ float, float, float, float, [99996 x float] }>* %1, i32 0, i32 1
+  store float 2.000000e+00, float* %3, align 4
+  %4 = getelementptr inbounds <{ float, float, float, float, [99996 x float] }>, <{ float, float, float, float, [99996 x float] }>* %1, i32 0, i32 2
+  store float 3.000000e+00, float* %4, align 8
+  %5 = getelementptr inbounds <{ float, float, float, float, [99996 x float] }>, <{ float, float, float, float, [99996 x float] }>* %1, i32 0, i32 3
+  store float 4.000000e+00, float* %5, align 4
+  %call = call i32 @_ZL10cudaMallocIfE9cudaErrorPPT_m(float** %device_x, i64 400000)
+  %call1 = call i32 @_ZL10cudaMallocIfE9cudaErrorPPT_m(float** %device_y, i64 400000)
+  %6 = load float*, float** %device_x, align 8
+  %7 = bitcast float* %6 to i8*
+  %arraydecay = getelementptr inbounds [100000 x float], [100000 x float]* %host_x, i64 0, i64 0
+  %8 = bitcast float* %arraydecay to i8*
+  %call2 = call i32 @cudaMemcpy(i8* %7, i8* %8, i64 400000, i32 1)
   call void @_ZN4dim3C2Ejjj(%struct.dim3* %agg.tmp, i32 1, i32 1, i32 1)
-  call void @_ZN4dim3C2Ejjj(%struct.dim3* %agg.tmp3, i32 4, i32 1, i32 1)
-  %4 = bitcast { i64, i32 }* %agg.tmp.coerce to i8*
-  %5 = bitcast %struct.dim3* %agg.tmp to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %4, i8* align 4 %5, i64 12, i1 false)
-  %6 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 0
-  %7 = load i64, i64* %6, align 4
-  %8 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 1
-  %9 = load i32, i32* %8, align 4
-  %10 = bitcast { i64, i32 }* %agg.tmp3.coerce to i8*
-  %11 = bitcast %struct.dim3* %agg.tmp3 to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %10, i8* align 4 %11, i64 12, i1 false)
-  %12 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp3.coerce, i32 0, i32 0
-  %13 = load i64, i64* %12, align 4
-  %14 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp3.coerce, i32 0, i32 1
-  %15 = load i32, i32* %14, align 4
-  %call4 = call i32 @__cudaPushCallConfiguration(i64 %7, i32 %9, i64 %13, i32 %15, i64 0, i8* null)
+  call void @_ZN4dim3C2Ejjj(%struct.dim3* %agg.tmp3, i32 100000, i32 1, i32 1)
+  %9 = bitcast { i64, i32 }* %agg.tmp.coerce to i8*
+  %10 = bitcast %struct.dim3* %agg.tmp to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %9, i8* align 4 %10, i64 12, i1 false)
+  %11 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 0
+  %12 = load i64, i64* %11, align 4
+  %13 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 1
+  %14 = load i32, i32* %13, align 4
+  %15 = bitcast { i64, i32 }* %agg.tmp3.coerce to i8*
+  %16 = bitcast %struct.dim3* %agg.tmp3 to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %15, i8* align 4 %16, i64 12, i1 false)
+  %17 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp3.coerce, i32 0, i32 0
+  %18 = load i64, i64* %17, align 4
+  %19 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp3.coerce, i32 0, i32 1
+  %20 = load i32, i32* %19, align 4
+  %call4 = call i32 @__cudaPushCallConfiguration(i64 %12, i32 %14, i64 %18, i32 %20, i64 0, i8* null)
   %tobool = icmp ne i32 %call4, 0
   br i1 %tobool, label %kcall.end, label %kcall.configok
 
 kcall.configok:                                   ; preds = %entry
-  %16 = load float, float* %a, align 4
-  %17 = load float*, float** %device_x, align 8
-  %18 = load float*, float** %device_y, align 8
-  call void @_Z4axpyfPfS_(float %16, float* %17, float* %18)
+  %21 = load float, float* %a, align 4
+  %22 = load float*, float** %device_x, align 8
+  %23 = load float*, float** %device_y, align 8
+  call void @_Z4axpyfPfS_(float %21, float* %22, float* %23)
   br label %kcall.end
 
 kcall.end:                                        ; preds = %kcall.configok, %entry
   %call5 = call i32 @cudaDeviceSynchronize()
-  %arraydecay6 = getelementptr inbounds [4 x float], [4 x float]* %host_y, i64 0, i64 0
-  %19 = bitcast float* %arraydecay6 to i8*
-  %20 = load float*, float** %device_y, align 8
-  %21 = bitcast float* %20 to i8*
-  %call7 = call i32 @cudaMemcpy(i8* %19, i8* %21, i64 16, i32 2)
+  %arraydecay6 = getelementptr inbounds [100000 x float], [100000 x float]* %host_y, i64 0, i64 0
+  %24 = bitcast float* %arraydecay6 to i8*
+  %25 = load float*, float** %device_y, align 8
+  %26 = bitcast float* %25 to i8*
+  %call7 = call i32 @cudaMemcpy(i8* %24, i8* %26, i64 400000, i32 2)
   store i32 0, i32* %i, align 4
   br label %for.cond
 
 for.cond:                                         ; preds = %for.inc, %kcall.end
-  %22 = load i32, i32* %i, align 4
-  %cmp = icmp slt i32 %22, 4
+  %27 = load i32, i32* %i, align 4
+  %cmp = icmp slt i32 %27, 100000
   br i1 %cmp, label %for.body, label %for.end
 
 for.body:                                         ; preds = %for.cond
   %call8 = call dereferenceable(272) %"class.std::basic_ostream"* @_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc(%"class.std::basic_ostream"* dereferenceable(272) @_ZSt4cout, i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0))
-  %23 = load i32, i32* %i, align 4
-  %call9 = call dereferenceable(272) %"class.std::basic_ostream"* @_ZNSolsEi(%"class.std::basic_ostream"* %call8, i32 %23)
+  %28 = load i32, i32* %i, align 4
+  %call9 = call dereferenceable(272) %"class.std::basic_ostream"* @_ZNSolsEi(%"class.std::basic_ostream"* %call8, i32 %28)
   %call10 = call dereferenceable(272) %"class.std::basic_ostream"* @_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc(%"class.std::basic_ostream"* dereferenceable(272) %call9, i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.1, i64 0, i64 0))
-  %24 = load i32, i32* %i, align 4
-  %idxprom = sext i32 %24 to i64
-  %arrayidx = getelementptr inbounds [4 x float], [4 x float]* %host_y, i64 0, i64 %idxprom
-  %25 = load float, float* %arrayidx, align 4
-  %call11 = call dereferenceable(272) %"class.std::basic_ostream"* @_ZNSolsEf(%"class.std::basic_ostream"* %call10, float %25)
+  %29 = load i32, i32* %i, align 4
+  %idxprom = sext i32 %29 to i64
+  %arrayidx = getelementptr inbounds [100000 x float], [100000 x float]* %host_y, i64 0, i64 %idxprom
+  %30 = load float, float* %arrayidx, align 4
+  %call11 = call dereferenceable(272) %"class.std::basic_ostream"* @_ZNSolsEf(%"class.std::basic_ostream"* %call10, float %30)
   %call12 = call dereferenceable(272) %"class.std::basic_ostream"* @_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc(%"class.std::basic_ostream"* dereferenceable(272) %call11, i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.2, i64 0, i64 0))
   br label %for.inc
 
 for.inc:                                          ; preds = %for.body
-  %26 = load i32, i32* %i, align 4
-  %inc = add nsw i32 %26, 1
+  %31 = load i32, i32* %i, align 4
+  %inc = add nsw i32 %31, 1
   store i32 %inc, i32* %i, align 4
   br label %for.cond
 
@@ -202,8 +220,11 @@ for.end:                                          ; preds = %for.cond
   ret i32 0
 }
 
+; Function Attrs: argmemonly nounwind
+declare void @llvm.memset.p0i8.i64(i8* nocapture writeonly, i8, i64, i1 immarg) #5
+
 ; Function Attrs: noinline optnone uwtable
-define internal i32 @_ZL10cudaMallocIfE9cudaErrorPPT_m(float** %devPtr, i64 %size) #3 {
+define internal i32 @_ZL10cudaMallocIfE9cudaErrorPPT_m(float** %devPtr, i64 %size) #4 {
 entry:
   %devPtr.addr = alloca float**, align 8
   %size.addr = alloca i64, align 8
@@ -222,7 +243,7 @@ declare dso_local i32 @cudaMemcpy(i8*, i8*, i64, i32) #1
 declare dso_local i32 @__cudaPushCallConfiguration(i64, i32, i64, i32, i64, i8*) #1
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define linkonce_odr dso_local void @_ZN4dim3C2Ejjj(%struct.dim3* %this, i32 %vx, i32 %vy, i32 %vz) unnamed_addr #6 comdat align 2 {
+define linkonce_odr dso_local void @_ZN4dim3C2Ejjj(%struct.dim3* %this, i32 %vx, i32 %vy, i32 %vz) unnamed_addr #7 comdat align 2 {
 entry:
   %this.addr = alloca %struct.dim3*, align 8
   %vx.addr = alloca i32, align 4
@@ -267,14 +288,15 @@ entry:
 attributes #0 = { noinline uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #2 = { nounwind }
-attributes #3 = { noinline optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #4 = { argmemonly nounwind }
-attributes #5 = { noinline norecurse optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #6 = { noinline nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #3 = { alwaysinline nounwind uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #4 = { noinline optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #5 = { argmemonly nounwind }
+attributes #6 = { noinline norecurse optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #7 = { noinline nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 
 !llvm.module.flags = !{!0, !1}
 !llvm.ident = !{!2}
 
 !0 = !{i32 2, !"SDK Version", [2 x i32] [i32 10, i32 1]}
 !1 = !{i32 1, !"wchar_size", i32 4}
-!2 = !{!"clang version 9.0.0 (https://github.com/llvm/llvm-project.git 9e441aee509f8a4d1c6a42b3da6ab9869e777051)"}
+!2 = !{!"clang version 9.0.0 (https://github.com/morimolymoly/llvm.git f7f3c2919a97198083f994fce16cd2b09010f77a)"}

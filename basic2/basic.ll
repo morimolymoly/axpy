@@ -48,27 +48,26 @@ entry:
   %d_c = alloca float**, align 8
   %igpu63 = alloca i32, align 4
   %i = alloca i32, align 4
-  %igpu96 = alloca i32, align 4
-  %igpu117 = alloca i32, align 4
+  %igpu99 = alloca i32, align 4
+  %igpu122 = alloca i32, align 4
   %t0 = alloca i64, align 8
   %loop = alloca i32, align 4
-  %igpu132 = alloca i32, align 4
+  %igpu137 = alloca i32, align 4
   %block = alloca i32, align 4
   %grid = alloca i32, align 4
   %agg.tmp = alloca %struct.dim3, align 4
-  %agg.tmp140 = alloca %struct.dim3, align 4
+  %agg.tmp145 = alloca %struct.dim3, align 4
   %agg.tmp.coerce = alloca { i64, i32 }, align 4
-  %agg.tmp140.coerce = alloca { i64, i32 }, align 4
-  %igpu156 = alloca i32, align 4
-  %igpu168 = alloca i32, align 4
-  %igpu193 = alloca i32, align 4
+  %agg.tmp145.coerce = alloca { i64, i32 }, align 4
+  %igpu161 = alloca i32, align 4
+  %igpu173 = alloca i32, align 4
+  %igpu198 = alloca i32, align 4
   %t1 = alloca i64, align 8
-  %igpu203 = alloca i32, align 4
+  %igpu208 = alloca i32, align 4
   %sum = alloca double, align 8
-  %i216 = alloca i32, align 4
+  %i222 = alloca i32, align 4
   %exact = alloca double, align 8
   %sec = alloca double, align 8
-  %igpu236 = alloca i32, align 4
   store i32 0, i32* %retval, align 4
   store i32 %argc, i32* %argc.addr, align 4
   store i8** %argv, i8*** %argv.addr, align 8
@@ -322,11 +321,11 @@ if.end50:                                         ; preds = %for.end, %while.end
   store i32 0, i32* %igpu63, align 4
   br label %for.cond64
 
-for.cond64:                                       ; preds = %for.inc79, %if.end50
+for.cond64:                                       ; preds = %for.inc82, %if.end50
   %56 = load i32, i32* %igpu63, align 4
   %57 = load i32, i32* %ngpu, align 4
   %cmp65 = icmp slt i32 %56, %57
-  br i1 %cmp65, label %for.body66, label %for.end81
+  br i1 %cmp65, label %for.body66, label %for.end84
 
 for.body66:                                       ; preds = %for.cond64
   %58 = load i32, i32* %gpu, align 4
@@ -347,543 +346,491 @@ if.end70:                                         ; preds = %if.then68, %for.bod
   %conv71 = sext i32 %62 to i64
   %mul72 = mul i64 %conv71, 4
   store i64 %mul72, i64* %size, align 8
-  %63 = load i32, i32* %gpu, align 4
-  %64 = load i32, i32* %um, align 4
-  %65 = load float**, float*** %d_a, align 8
-  %66 = load i32, i32* %igpu63, align 4
-  %idxprom73 = sext i32 %66 to i64
-  %arrayidx74 = getelementptr inbounds float*, float** %65, i64 %idxprom73
-  %67 = bitcast float** %arrayidx74 to i8**
-  %68 = load i64, i64* %size, align 8
-  call void @_Z11cuda_mallociiPPvm(i32 %63, i32 %64, i8** %67, i64 %68)
-  %69 = load i32, i32* %gpu, align 4
-  %70 = load i32, i32* %um, align 4
-  %71 = load float**, float*** %d_b, align 8
+  %63 = load float**, float*** %d_a, align 8
+  %64 = load i32, i32* %igpu63, align 4
+  %idxprom73 = sext i32 %64 to i64
+  %arrayidx74 = getelementptr inbounds float*, float** %63, i64 %idxprom73
+  %65 = bitcast float** %arrayidx74 to i8**
+  %66 = load i64, i64* %size, align 8
+  %call75 = call i32 @cudaMalloc(i8** %65, i64 %66)
+  %67 = load float**, float*** %d_b, align 8
+  %68 = load i32, i32* %igpu63, align 4
+  %idxprom76 = sext i32 %68 to i64
+  %arrayidx77 = getelementptr inbounds float*, float** %67, i64 %idxprom76
+  %69 = bitcast float** %arrayidx77 to i8**
+  %70 = load i64, i64* %size, align 8
+  %call78 = call i32 @cudaMalloc(i8** %69, i64 %70)
+  %71 = load float**, float*** %d_c, align 8
   %72 = load i32, i32* %igpu63, align 4
-  %idxprom75 = sext i32 %72 to i64
-  %arrayidx76 = getelementptr inbounds float*, float** %71, i64 %idxprom75
-  %73 = bitcast float** %arrayidx76 to i8**
+  %idxprom79 = sext i32 %72 to i64
+  %arrayidx80 = getelementptr inbounds float*, float** %71, i64 %idxprom79
+  %73 = bitcast float** %arrayidx80 to i8**
   %74 = load i64, i64* %size, align 8
-  call void @_Z11cuda_mallociiPPvm(i32 %69, i32 %70, i8** %73, i64 %74)
-  %75 = load i32, i32* %gpu, align 4
-  %76 = load i32, i32* %um, align 4
-  %77 = load float**, float*** %d_c, align 8
-  %78 = load i32, i32* %igpu63, align 4
-  %idxprom77 = sext i32 %78 to i64
-  %arrayidx78 = getelementptr inbounds float*, float** %77, i64 %idxprom77
-  %79 = bitcast float** %arrayidx78 to i8**
-  %80 = load i64, i64* %size, align 8
-  call void @_Z11cuda_mallociiPPvm(i32 %75, i32 %76, i8** %79, i64 %80)
-  br label %for.inc79
+  %call81 = call i32 @cudaMalloc(i8** %73, i64 %74)
+  br label %for.inc82
 
-for.inc79:                                        ; preds = %if.end70
-  %81 = load i32, i32* %igpu63, align 4
-  %inc80 = add nsw i32 %81, 1
-  store i32 %inc80, i32* %igpu63, align 4
+for.inc82:                                        ; preds = %if.end70
+  %75 = load i32, i32* %igpu63, align 4
+  %inc83 = add nsw i32 %75, 1
+  store i32 %inc83, i32* %igpu63, align 4
   br label %for.cond64
 
-for.end81:                                        ; preds = %for.cond64
+for.end84:                                        ; preds = %for.cond64
   store i32 0, i32* %i, align 4
-  br label %for.cond82
+  br label %for.cond85
 
-for.cond82:                                       ; preds = %for.inc93, %for.end81
-  %82 = load i32, i32* %i, align 4
-  %83 = load i32, i32* %nvector, align 4
-  %cmp83 = icmp slt i32 %82, %83
-  br i1 %cmp83, label %for.body84, label %for.end95
+for.cond85:                                       ; preds = %for.inc96, %for.end84
+  %76 = load i32, i32* %i, align 4
+  %77 = load i32, i32* %nvector, align 4
+  %cmp86 = icmp slt i32 %76, %77
+  br i1 %cmp86, label %for.body87, label %for.end98
 
-for.body84:                                       ; preds = %for.cond82
-  %84 = load i32, i32* %i, align 4
-  %conv85 = sitofp i32 %84 to float
-  %85 = load float*, float** %h_a, align 8
-  %86 = load i32, i32* %i, align 4
-  %idxprom86 = sext i32 %86 to i64
-  %arrayidx87 = getelementptr inbounds float, float* %85, i64 %idxprom86
-  store float %conv85, float* %arrayidx87, align 4
-  %87 = load i32, i32* %i, align 4
-  %add = add nsw i32 %87, 1
-  %conv88 = sitofp i32 %add to float
-  %88 = load float*, float** %h_b, align 8
-  %89 = load i32, i32* %i, align 4
-  %idxprom89 = sext i32 %89 to i64
-  %arrayidx90 = getelementptr inbounds float, float* %88, i64 %idxprom89
+for.body87:                                       ; preds = %for.cond85
+  %78 = load i32, i32* %i, align 4
+  %conv88 = sitofp i32 %78 to float
+  %79 = load float*, float** %h_a, align 8
+  %80 = load i32, i32* %i, align 4
+  %idxprom89 = sext i32 %80 to i64
+  %arrayidx90 = getelementptr inbounds float, float* %79, i64 %idxprom89
   store float %conv88, float* %arrayidx90, align 4
-  %90 = load float*, float** %h_c, align 8
-  %91 = load i32, i32* %i, align 4
-  %idxprom91 = sext i32 %91 to i64
-  %arrayidx92 = getelementptr inbounds float, float* %90, i64 %idxprom91
-  store float 0.000000e+00, float* %arrayidx92, align 4
-  br label %for.inc93
+  %81 = load i32, i32* %i, align 4
+  %add = add nsw i32 %81, 1
+  %conv91 = sitofp i32 %add to float
+  %82 = load float*, float** %h_b, align 8
+  %83 = load i32, i32* %i, align 4
+  %idxprom92 = sext i32 %83 to i64
+  %arrayidx93 = getelementptr inbounds float, float* %82, i64 %idxprom92
+  store float %conv91, float* %arrayidx93, align 4
+  %84 = load float*, float** %h_c, align 8
+  %85 = load i32, i32* %i, align 4
+  %idxprom94 = sext i32 %85 to i64
+  %arrayidx95 = getelementptr inbounds float, float* %84, i64 %idxprom94
+  store float 0.000000e+00, float* %arrayidx95, align 4
+  br label %for.inc96
 
-for.inc93:                                        ; preds = %for.body84
-  %92 = load i32, i32* %i, align 4
-  %inc94 = add nsw i32 %92, 1
-  store i32 %inc94, i32* %i, align 4
-  br label %for.cond82
+for.inc96:                                        ; preds = %for.body87
+  %86 = load i32, i32* %i, align 4
+  %inc97 = add nsw i32 %86, 1
+  store i32 %inc97, i32* %i, align 4
+  br label %for.cond85
 
-for.end95:                                        ; preds = %for.cond82
-  store i32 0, i32* %igpu96, align 4
-  br label %for.cond97
+for.end98:                                        ; preds = %for.cond85
+  store i32 0, i32* %igpu99, align 4
+  br label %for.cond100
 
-for.cond97:                                       ; preds = %for.inc114, %for.end95
-  %93 = load i32, i32* %igpu96, align 4
-  %94 = load i32, i32* %ngpu, align 4
-  %cmp98 = icmp slt i32 %93, %94
-  br i1 %cmp98, label %for.body99, label %for.end116
+for.cond100:                                      ; preds = %for.inc119, %for.end98
+  %87 = load i32, i32* %igpu99, align 4
+  %88 = load i32, i32* %ngpu, align 4
+  %cmp101 = icmp slt i32 %87, %88
+  br i1 %cmp101, label %for.body102, label %for.end121
 
-for.body99:                                       ; preds = %for.cond97
-  %95 = load i32*, i32** %length, align 8
-  %96 = load i32, i32* %igpu96, align 4
-  %idxprom100 = sext i32 %96 to i64
-  %arrayidx101 = getelementptr inbounds i32, i32* %95, i64 %idxprom100
-  %97 = load i32, i32* %arrayidx101, align 4
-  %conv102 = sext i32 %97 to i64
-  %mul103 = mul i64 %conv102, 4
-  store i64 %mul103, i64* %size, align 8
-  %98 = load i32, i32* %gpu, align 4
-  %99 = load float**, float*** %d_a, align 8
-  %100 = load i32, i32* %igpu96, align 4
-  %idxprom104 = sext i32 %100 to i64
-  %arrayidx105 = getelementptr inbounds float*, float** %99, i64 %idxprom104
-  %101 = load float*, float** %arrayidx105, align 8
-  %102 = bitcast float* %101 to i8*
-  %103 = load float*, float** %h_a, align 8
-  %104 = load i32*, i32** %offset, align 8
-  %105 = load i32, i32* %igpu96, align 4
-  %idxprom106 = sext i32 %105 to i64
-  %arrayidx107 = getelementptr inbounds i32, i32* %104, i64 %idxprom106
-  %106 = load i32, i32* %arrayidx107, align 4
-  %idx.ext = sext i32 %106 to i64
-  %add.ptr = getelementptr inbounds float, float* %103, i64 %idx.ext
-  %107 = bitcast float* %add.ptr to i8*
-  %108 = load i64, i64* %size, align 8
-  call void @_Z11cuda_memcpyiPvPKvm14cudaMemcpyKind(i32 %98, i8* %102, i8* %107, i64 %108, i32 1)
-  %109 = load i32, i32* %gpu, align 4
-  %110 = load float**, float*** %d_b, align 8
-  %111 = load i32, i32* %igpu96, align 4
-  %idxprom108 = sext i32 %111 to i64
-  %arrayidx109 = getelementptr inbounds float*, float** %110, i64 %idxprom108
-  %112 = load float*, float** %arrayidx109, align 8
-  %113 = bitcast float* %112 to i8*
-  %114 = load float*, float** %h_b, align 8
-  %115 = load i32*, i32** %offset, align 8
-  %116 = load i32, i32* %igpu96, align 4
-  %idxprom110 = sext i32 %116 to i64
-  %arrayidx111 = getelementptr inbounds i32, i32* %115, i64 %idxprom110
-  %117 = load i32, i32* %arrayidx111, align 4
-  %idx.ext112 = sext i32 %117 to i64
-  %add.ptr113 = getelementptr inbounds float, float* %114, i64 %idx.ext112
-  %118 = bitcast float* %add.ptr113 to i8*
-  %119 = load i64, i64* %size, align 8
-  call void @_Z11cuda_memcpyiPvPKvm14cudaMemcpyKind(i32 %109, i8* %113, i8* %118, i64 %119, i32 1)
-  br label %for.inc114
+for.body102:                                      ; preds = %for.cond100
+  %89 = load i32*, i32** %length, align 8
+  %90 = load i32, i32* %igpu99, align 4
+  %idxprom103 = sext i32 %90 to i64
+  %arrayidx104 = getelementptr inbounds i32, i32* %89, i64 %idxprom103
+  %91 = load i32, i32* %arrayidx104, align 4
+  %conv105 = sext i32 %91 to i64
+  %mul106 = mul i64 %conv105, 4
+  store i64 %mul106, i64* %size, align 8
+  %92 = load float**, float*** %d_a, align 8
+  %93 = load i32, i32* %igpu99, align 4
+  %idxprom107 = sext i32 %93 to i64
+  %arrayidx108 = getelementptr inbounds float*, float** %92, i64 %idxprom107
+  %94 = load float*, float** %arrayidx108, align 8
+  %95 = bitcast float* %94 to i8*
+  %96 = load float*, float** %h_a, align 8
+  %97 = load i32*, i32** %offset, align 8
+  %98 = load i32, i32* %igpu99, align 4
+  %idxprom109 = sext i32 %98 to i64
+  %arrayidx110 = getelementptr inbounds i32, i32* %97, i64 %idxprom109
+  %99 = load i32, i32* %arrayidx110, align 4
+  %idx.ext = sext i32 %99 to i64
+  %add.ptr = getelementptr inbounds float, float* %96, i64 %idx.ext
+  %100 = bitcast float* %add.ptr to i8*
+  %101 = load i64, i64* %size, align 8
+  %call111 = call i32 @cudaMemcpy(i8* %95, i8* %100, i64 %101, i32 1)
+  %102 = load float**, float*** %d_b, align 8
+  %103 = load i32, i32* %igpu99, align 4
+  %idxprom112 = sext i32 %103 to i64
+  %arrayidx113 = getelementptr inbounds float*, float** %102, i64 %idxprom112
+  %104 = load float*, float** %arrayidx113, align 8
+  %105 = bitcast float* %104 to i8*
+  %106 = load float*, float** %h_b, align 8
+  %107 = load i32*, i32** %offset, align 8
+  %108 = load i32, i32* %igpu99, align 4
+  %idxprom114 = sext i32 %108 to i64
+  %arrayidx115 = getelementptr inbounds i32, i32* %107, i64 %idxprom114
+  %109 = load i32, i32* %arrayidx115, align 4
+  %idx.ext116 = sext i32 %109 to i64
+  %add.ptr117 = getelementptr inbounds float, float* %106, i64 %idx.ext116
+  %110 = bitcast float* %add.ptr117 to i8*
+  %111 = load i64, i64* %size, align 8
+  %call118 = call i32 @cudaMemcpy(i8* %105, i8* %110, i64 %111, i32 1)
+  br label %for.inc119
 
-for.inc114:                                       ; preds = %for.body99
-  %120 = load i32, i32* %igpu96, align 4
-  %inc115 = add nsw i32 %120, 1
-  store i32 %inc115, i32* %igpu96, align 4
-  br label %for.cond97
+for.inc119:                                       ; preds = %for.body102
+  %112 = load i32, i32* %igpu99, align 4
+  %inc120 = add nsw i32 %112, 1
+  store i32 %inc120, i32* %igpu99, align 4
+  br label %for.cond100
 
-for.end116:                                       ; preds = %for.cond97
-  store i32 0, i32* %igpu117, align 4
-  br label %for.cond118
+for.end121:                                       ; preds = %for.cond100
+  store i32 0, i32* %igpu122, align 4
+  br label %for.cond123
 
-for.cond118:                                      ; preds = %for.inc123, %for.end116
-  %121 = load i32, i32* %igpu117, align 4
-  %122 = load i32, i32* %ngpu, align 4
-  %cmp119 = icmp slt i32 %121, %122
-  br i1 %cmp119, label %for.body120, label %for.end125
+for.cond123:                                      ; preds = %for.inc128, %for.end121
+  %113 = load i32, i32* %igpu122, align 4
+  %114 = load i32, i32* %ngpu, align 4
+  %cmp124 = icmp slt i32 %113, %114
+  br i1 %cmp124, label %for.body125, label %for.end130
 
-for.body120:                                      ; preds = %for.cond118
-  %123 = load i32, i32* %igpu117, align 4
-  %call121 = call i32 @cudaSetDevice(i32 %123)
-  %call122 = call i32 @cudaDeviceSynchronize()
-  br label %for.inc123
+for.body125:                                      ; preds = %for.cond123
+  %115 = load i32, i32* %igpu122, align 4
+  %call126 = call i32 @cudaSetDevice(i32 %115)
+  %call127 = call i32 @cudaDeviceSynchronize()
+  br label %for.inc128
 
-for.inc123:                                       ; preds = %for.body120
-  %124 = load i32, i32* %igpu117, align 4
-  %inc124 = add nsw i32 %124, 1
-  store i32 %inc124, i32* %igpu117, align 4
-  br label %for.cond118
+for.inc128:                                       ; preds = %for.body125
+  %116 = load i32, i32* %igpu122, align 4
+  %inc129 = add nsw i32 %116, 1
+  store i32 %inc129, i32* %igpu122, align 4
+  br label %for.cond123
 
-for.end125:                                       ; preds = %for.cond118
-  %call126 = call i64 @clock() #10
-  store i64 %call126, i64* %t0, align 8
+for.end130:                                       ; preds = %for.cond123
+  %call131 = call i64 @clock() #10
+  store i64 %call131, i64* %t0, align 8
   store i32 0, i32* %loop, align 4
-  br label %for.cond127
+  br label %for.cond132
 
-for.cond127:                                      ; preds = %for.inc190, %for.end125
-  %125 = load i32, i32* %loop, align 4
-  %126 = load i32, i32* %nloop, align 4
-  %cmp128 = icmp slt i32 %125, %126
-  br i1 %cmp128, label %for.body129, label %for.end192
+for.cond132:                                      ; preds = %for.inc195, %for.end130
+  %117 = load i32, i32* %loop, align 4
+  %118 = load i32, i32* %nloop, align 4
+  %cmp133 = icmp slt i32 %117, %118
+  br i1 %cmp133, label %for.body134, label %for.end197
 
-for.body129:                                      ; preds = %for.cond127
-  %127 = load i32, i32* %gpu, align 4
-  %tobool130 = icmp ne i32 %127, 0
-  br i1 %tobool130, label %if.then131, label %if.else167
+for.body134:                                      ; preds = %for.cond132
+  %119 = load i32, i32* %gpu, align 4
+  %tobool135 = icmp ne i32 %119, 0
+  br i1 %tobool135, label %if.then136, label %if.else172
 
-if.then131:                                       ; preds = %for.body129
-  store i32 0, i32* %igpu132, align 4
-  br label %for.cond133
+if.then136:                                       ; preds = %for.body134
+  store i32 0, i32* %igpu137, align 4
+  br label %for.cond138
 
-for.cond133:                                      ; preds = %for.inc153, %if.then131
-  %128 = load i32, i32* %igpu132, align 4
-  %129 = load i32, i32* %ngpu, align 4
-  %cmp134 = icmp slt i32 %128, %129
-  br i1 %cmp134, label %for.body135, label %for.end155
+for.cond138:                                      ; preds = %for.inc158, %if.then136
+  %120 = load i32, i32* %igpu137, align 4
+  %121 = load i32, i32* %ngpu, align 4
+  %cmp139 = icmp slt i32 %120, %121
+  br i1 %cmp139, label %for.body140, label %for.end160
 
-for.body135:                                      ; preds = %for.cond133
-  %130 = load i32, i32* %igpu132, align 4
-  %call136 = call i32 @cudaSetDevice(i32 %130)
+for.body140:                                      ; preds = %for.cond138
+  %122 = load i32, i32* %igpu137, align 4
+  %call141 = call i32 @cudaSetDevice(i32 %122)
   store i32 256, i32* %block, align 4
-  %131 = load i32*, i32** %length, align 8
-  %132 = load i32, i32* %igpu132, align 4
-  %idxprom137 = sext i32 %132 to i64
-  %arrayidx138 = getelementptr inbounds i32, i32* %131, i64 %idxprom137
-  %133 = load i32, i32* %arrayidx138, align 4
-  %134 = load i32, i32* %block, align 4
-  %sub = sub nsw i32 %134, 1
-  %add139 = add nsw i32 %133, %sub
-  %135 = load i32, i32* %block, align 4
-  %div = sdiv i32 %add139, %135
+  %123 = load i32*, i32** %length, align 8
+  %124 = load i32, i32* %igpu137, align 4
+  %idxprom142 = sext i32 %124 to i64
+  %arrayidx143 = getelementptr inbounds i32, i32* %123, i64 %idxprom142
+  %125 = load i32, i32* %arrayidx143, align 4
+  %126 = load i32, i32* %block, align 4
+  %sub = sub nsw i32 %126, 1
+  %add144 = add nsw i32 %125, %sub
+  %127 = load i32, i32* %block, align 4
+  %div = sdiv i32 %add144, %127
   store i32 %div, i32* %grid, align 4
-  %136 = load i32, i32* %grid, align 4
-  call void @_ZN4dim3C2Ejjj(%struct.dim3* %agg.tmp, i32 %136, i32 1, i32 1)
-  %137 = load i32, i32* %block, align 4
-  call void @_ZN4dim3C2Ejjj(%struct.dim3* %agg.tmp140, i32 %137, i32 1, i32 1)
-  %138 = load %struct.CUstream_st**, %struct.CUstream_st*** %stream, align 8
-  %139 = load i32, i32* %igpu132, align 4
-  %idxprom141 = sext i32 %139 to i64
-  %arrayidx142 = getelementptr inbounds %struct.CUstream_st*, %struct.CUstream_st** %138, i64 %idxprom141
-  %140 = load %struct.CUstream_st*, %struct.CUstream_st** %arrayidx142, align 8
-  %141 = bitcast %struct.CUstream_st* %140 to i8*
-  %142 = bitcast { i64, i32 }* %agg.tmp.coerce to i8*
-  %143 = bitcast %struct.dim3* %agg.tmp to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %142, i8* align 4 %143, i64 12, i1 false)
-  %144 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 0
-  %145 = load i64, i64* %144, align 4
-  %146 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 1
-  %147 = load i32, i32* %146, align 4
-  %148 = bitcast { i64, i32 }* %agg.tmp140.coerce to i8*
-  %149 = bitcast %struct.dim3* %agg.tmp140 to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %148, i8* align 4 %149, i64 12, i1 false)
-  %150 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp140.coerce, i32 0, i32 0
-  %151 = load i64, i64* %150, align 4
-  %152 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp140.coerce, i32 0, i32 1
-  %153 = load i32, i32* %152, align 4
-  %call143 = call i32 @__cudaPushCallConfiguration(i64 %145, i32 %147, i64 %151, i32 %153, i64 0, i8* %141)
-  %tobool144 = icmp ne i32 %call143, 0
-  br i1 %tobool144, label %kcall.end, label %kcall.configok
+  %128 = load i32, i32* %grid, align 4
+  call void @_ZN4dim3C2Ejjj(%struct.dim3* %agg.tmp, i32 %128, i32 1, i32 1)
+  %129 = load i32, i32* %block, align 4
+  call void @_ZN4dim3C2Ejjj(%struct.dim3* %agg.tmp145, i32 %129, i32 1, i32 1)
+  %130 = load %struct.CUstream_st**, %struct.CUstream_st*** %stream, align 8
+  %131 = load i32, i32* %igpu137, align 4
+  %idxprom146 = sext i32 %131 to i64
+  %arrayidx147 = getelementptr inbounds %struct.CUstream_st*, %struct.CUstream_st** %130, i64 %idxprom146
+  %132 = load %struct.CUstream_st*, %struct.CUstream_st** %arrayidx147, align 8
+  %133 = bitcast %struct.CUstream_st* %132 to i8*
+  %134 = bitcast { i64, i32 }* %agg.tmp.coerce to i8*
+  %135 = bitcast %struct.dim3* %agg.tmp to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %134, i8* align 4 %135, i64 12, i1 false)
+  %136 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 0
+  %137 = load i64, i64* %136, align 4
+  %138 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp.coerce, i32 0, i32 1
+  %139 = load i32, i32* %138, align 4
+  %140 = bitcast { i64, i32 }* %agg.tmp145.coerce to i8*
+  %141 = bitcast %struct.dim3* %agg.tmp145 to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %140, i8* align 4 %141, i64 12, i1 false)
+  %142 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp145.coerce, i32 0, i32 0
+  %143 = load i64, i64* %142, align 4
+  %144 = getelementptr inbounds { i64, i32 }, { i64, i32 }* %agg.tmp145.coerce, i32 0, i32 1
+  %145 = load i32, i32* %144, align 4
+  %call148 = call i32 @__cudaPushCallConfiguration(i64 %137, i32 %139, i64 %143, i32 %145, i64 0, i8* %133)
+  %tobool149 = icmp ne i32 %call148, 0
+  br i1 %tobool149, label %kcall.end, label %kcall.configok
 
-kcall.configok:                                   ; preds = %for.body135
-  %154 = load i32*, i32** %length, align 8
-  %155 = load i32, i32* %igpu132, align 4
-  %idxprom145 = sext i32 %155 to i64
-  %arrayidx146 = getelementptr inbounds i32, i32* %154, i64 %idxprom145
-  %156 = load i32, i32* %arrayidx146, align 4
-  %157 = load float**, float*** %d_a, align 8
-  %158 = load i32, i32* %igpu132, align 4
-  %idxprom147 = sext i32 %158 to i64
-  %arrayidx148 = getelementptr inbounds float*, float** %157, i64 %idxprom147
-  %159 = load float*, float** %arrayidx148, align 8
-  %160 = load float**, float*** %d_b, align 8
-  %161 = load i32, i32* %igpu132, align 4
-  %idxprom149 = sext i32 %161 to i64
-  %arrayidx150 = getelementptr inbounds float*, float** %160, i64 %idxprom149
-  %162 = load float*, float** %arrayidx150, align 8
-  %163 = load float**, float*** %d_c, align 8
-  %164 = load i32, i32* %igpu132, align 4
-  %idxprom151 = sext i32 %164 to i64
-  %arrayidx152 = getelementptr inbounds float*, float** %163, i64 %idxprom151
-  %165 = load float*, float** %arrayidx152, align 8
-  call void @_ZL8vadd_gpuiPKfS0_Pf(i32 %156, float* %159, float* %162, float* %165)
+kcall.configok:                                   ; preds = %for.body140
+  %146 = load i32*, i32** %length, align 8
+  %147 = load i32, i32* %igpu137, align 4
+  %idxprom150 = sext i32 %147 to i64
+  %arrayidx151 = getelementptr inbounds i32, i32* %146, i64 %idxprom150
+  %148 = load i32, i32* %arrayidx151, align 4
+  %149 = load float**, float*** %d_a, align 8
+  %150 = load i32, i32* %igpu137, align 4
+  %idxprom152 = sext i32 %150 to i64
+  %arrayidx153 = getelementptr inbounds float*, float** %149, i64 %idxprom152
+  %151 = load float*, float** %arrayidx153, align 8
+  %152 = load float**, float*** %d_b, align 8
+  %153 = load i32, i32* %igpu137, align 4
+  %idxprom154 = sext i32 %153 to i64
+  %arrayidx155 = getelementptr inbounds float*, float** %152, i64 %idxprom154
+  %154 = load float*, float** %arrayidx155, align 8
+  %155 = load float**, float*** %d_c, align 8
+  %156 = load i32, i32* %igpu137, align 4
+  %idxprom156 = sext i32 %156 to i64
+  %arrayidx157 = getelementptr inbounds float*, float** %155, i64 %idxprom156
+  %157 = load float*, float** %arrayidx157, align 8
+  call void @_ZL8vadd_gpuiPKfS0_Pf(i32 %148, float* %151, float* %154, float* %157)
   br label %kcall.end
 
-kcall.end:                                        ; preds = %kcall.configok, %for.body135
-  br label %for.inc153
+kcall.end:                                        ; preds = %kcall.configok, %for.body140
+  br label %for.inc158
 
-for.inc153:                                       ; preds = %kcall.end
-  %166 = load i32, i32* %igpu132, align 4
-  %inc154 = add nsw i32 %166, 1
-  store i32 %inc154, i32* %igpu132, align 4
-  br label %for.cond133
+for.inc158:                                       ; preds = %kcall.end
+  %158 = load i32, i32* %igpu137, align 4
+  %inc159 = add nsw i32 %158, 1
+  store i32 %inc159, i32* %igpu137, align 4
+  br label %for.cond138
 
-for.end155:                                       ; preds = %for.cond133
-  store i32 0, i32* %igpu156, align 4
-  br label %for.cond157
+for.end160:                                       ; preds = %for.cond138
+  store i32 0, i32* %igpu161, align 4
+  br label %for.cond162
 
-for.cond157:                                      ; preds = %for.inc164, %for.end155
-  %167 = load i32, i32* %igpu156, align 4
-  %168 = load i32, i32* %ngpu, align 4
-  %cmp158 = icmp slt i32 %167, %168
-  br i1 %cmp158, label %for.body159, label %for.end166
+for.cond162:                                      ; preds = %for.inc169, %for.end160
+  %159 = load i32, i32* %igpu161, align 4
+  %160 = load i32, i32* %ngpu, align 4
+  %cmp163 = icmp slt i32 %159, %160
+  br i1 %cmp163, label %for.body164, label %for.end171
 
-for.body159:                                      ; preds = %for.cond157
-  %169 = load i32, i32* %igpu156, align 4
-  %call160 = call i32 @cudaSetDevice(i32 %169)
-  %170 = load %struct.CUstream_st**, %struct.CUstream_st*** %stream, align 8
-  %171 = load i32, i32* %igpu156, align 4
-  %idxprom161 = sext i32 %171 to i64
-  %arrayidx162 = getelementptr inbounds %struct.CUstream_st*, %struct.CUstream_st** %170, i64 %idxprom161
-  %172 = load %struct.CUstream_st*, %struct.CUstream_st** %arrayidx162, align 8
-  %call163 = call i32 @cudaStreamSynchronize(%struct.CUstream_st* %172)
-  br label %for.inc164
+for.body164:                                      ; preds = %for.cond162
+  %161 = load i32, i32* %igpu161, align 4
+  %call165 = call i32 @cudaSetDevice(i32 %161)
+  %162 = load %struct.CUstream_st**, %struct.CUstream_st*** %stream, align 8
+  %163 = load i32, i32* %igpu161, align 4
+  %idxprom166 = sext i32 %163 to i64
+  %arrayidx167 = getelementptr inbounds %struct.CUstream_st*, %struct.CUstream_st** %162, i64 %idxprom166
+  %164 = load %struct.CUstream_st*, %struct.CUstream_st** %arrayidx167, align 8
+  %call168 = call i32 @cudaStreamSynchronize(%struct.CUstream_st* %164)
+  br label %for.inc169
 
-for.inc164:                                       ; preds = %for.body159
-  %173 = load i32, i32* %igpu156, align 4
-  %inc165 = add nsw i32 %173, 1
-  store i32 %inc165, i32* %igpu156, align 4
-  br label %for.cond157
+for.inc169:                                       ; preds = %for.body164
+  %165 = load i32, i32* %igpu161, align 4
+  %inc170 = add nsw i32 %165, 1
+  store i32 %inc170, i32* %igpu161, align 4
+  br label %for.cond162
 
-for.end166:                                       ; preds = %for.cond157
-  br label %if.end189
+for.end171:                                       ; preds = %for.cond162
+  br label %if.end194
 
-if.else167:                                       ; preds = %for.body129
-  store i32 0, i32* %igpu168, align 4
-  br label %for.cond169
+if.else172:                                       ; preds = %for.body134
+  store i32 0, i32* %igpu173, align 4
+  br label %for.cond174
 
-for.cond169:                                      ; preds = %for.inc186, %if.else167
-  %174 = load i32, i32* %igpu168, align 4
-  %175 = load i32, i32* %ngpu, align 4
-  %cmp170 = icmp slt i32 %174, %175
-  br i1 %cmp170, label %for.body171, label %for.end188
+for.cond174:                                      ; preds = %for.inc191, %if.else172
+  %166 = load i32, i32* %igpu173, align 4
+  %167 = load i32, i32* %ngpu, align 4
+  %cmp175 = icmp slt i32 %166, %167
+  br i1 %cmp175, label %for.body176, label %for.end193
 
-for.body171:                                      ; preds = %for.cond169
-  %176 = load i32*, i32** %length, align 8
-  %177 = load i32, i32* %igpu168, align 4
-  %idxprom172 = sext i32 %177 to i64
-  %arrayidx173 = getelementptr inbounds i32, i32* %176, i64 %idxprom172
-  %178 = load i32, i32* %arrayidx173, align 4
-  %179 = load float*, float** %h_a, align 8
+for.body176:                                      ; preds = %for.cond174
+  %168 = load i32*, i32** %length, align 8
+  %169 = load i32, i32* %igpu173, align 4
+  %idxprom177 = sext i32 %169 to i64
+  %arrayidx178 = getelementptr inbounds i32, i32* %168, i64 %idxprom177
+  %170 = load i32, i32* %arrayidx178, align 4
+  %171 = load float*, float** %h_a, align 8
+  %172 = load i32*, i32** %offset, align 8
+  %173 = load i32, i32* %igpu173, align 4
+  %idxprom179 = sext i32 %173 to i64
+  %arrayidx180 = getelementptr inbounds i32, i32* %172, i64 %idxprom179
+  %174 = load i32, i32* %arrayidx180, align 4
+  %idx.ext181 = sext i32 %174 to i64
+  %add.ptr182 = getelementptr inbounds float, float* %171, i64 %idx.ext181
+  %175 = load float*, float** %h_b, align 8
+  %176 = load i32*, i32** %offset, align 8
+  %177 = load i32, i32* %igpu173, align 4
+  %idxprom183 = sext i32 %177 to i64
+  %arrayidx184 = getelementptr inbounds i32, i32* %176, i64 %idxprom183
+  %178 = load i32, i32* %arrayidx184, align 4
+  %idx.ext185 = sext i32 %178 to i64
+  %add.ptr186 = getelementptr inbounds float, float* %175, i64 %idx.ext185
+  %179 = load float*, float** %h_c, align 8
   %180 = load i32*, i32** %offset, align 8
-  %181 = load i32, i32* %igpu168, align 4
-  %idxprom174 = sext i32 %181 to i64
-  %arrayidx175 = getelementptr inbounds i32, i32* %180, i64 %idxprom174
-  %182 = load i32, i32* %arrayidx175, align 4
-  %idx.ext176 = sext i32 %182 to i64
-  %add.ptr177 = getelementptr inbounds float, float* %179, i64 %idx.ext176
-  %183 = load float*, float** %h_b, align 8
-  %184 = load i32*, i32** %offset, align 8
-  %185 = load i32, i32* %igpu168, align 4
-  %idxprom178 = sext i32 %185 to i64
-  %arrayidx179 = getelementptr inbounds i32, i32* %184, i64 %idxprom178
-  %186 = load i32, i32* %arrayidx179, align 4
-  %idx.ext180 = sext i32 %186 to i64
-  %add.ptr181 = getelementptr inbounds float, float* %183, i64 %idx.ext180
-  %187 = load float*, float** %h_c, align 8
-  %188 = load i32*, i32** %offset, align 8
-  %189 = load i32, i32* %igpu168, align 4
-  %idxprom182 = sext i32 %189 to i64
-  %arrayidx183 = getelementptr inbounds i32, i32* %188, i64 %idxprom182
-  %190 = load i32, i32* %arrayidx183, align 4
-  %idx.ext184 = sext i32 %190 to i64
-  %add.ptr185 = getelementptr inbounds float, float* %187, i64 %idx.ext184
-  call void @_ZL8vadd_cpuiPKfS0_Pf(i32 %178, float* %add.ptr177, float* %add.ptr181, float* %add.ptr185)
-  br label %for.inc186
+  %181 = load i32, i32* %igpu173, align 4
+  %idxprom187 = sext i32 %181 to i64
+  %arrayidx188 = getelementptr inbounds i32, i32* %180, i64 %idxprom187
+  %182 = load i32, i32* %arrayidx188, align 4
+  %idx.ext189 = sext i32 %182 to i64
+  %add.ptr190 = getelementptr inbounds float, float* %179, i64 %idx.ext189
+  call void @_ZL8vadd_cpuiPKfS0_Pf(i32 %170, float* %add.ptr182, float* %add.ptr186, float* %add.ptr190)
+  br label %for.inc191
 
-for.inc186:                                       ; preds = %for.body171
-  %191 = load i32, i32* %igpu168, align 4
-  %inc187 = add nsw i32 %191, 1
-  store i32 %inc187, i32* %igpu168, align 4
-  br label %for.cond169
+for.inc191:                                       ; preds = %for.body176
+  %183 = load i32, i32* %igpu173, align 4
+  %inc192 = add nsw i32 %183, 1
+  store i32 %inc192, i32* %igpu173, align 4
+  br label %for.cond174
 
-for.end188:                                       ; preds = %for.cond169
-  br label %if.end189
+for.end193:                                       ; preds = %for.cond174
+  br label %if.end194
 
-if.end189:                                        ; preds = %for.end188, %for.end166
-  br label %for.inc190
+if.end194:                                        ; preds = %for.end193, %for.end171
+  br label %for.inc195
 
-for.inc190:                                       ; preds = %if.end189
-  %192 = load i32, i32* %loop, align 4
-  %inc191 = add nsw i32 %192, 1
-  store i32 %inc191, i32* %loop, align 4
-  br label %for.cond127
+for.inc195:                                       ; preds = %if.end194
+  %184 = load i32, i32* %loop, align 4
+  %inc196 = add nsw i32 %184, 1
+  store i32 %inc196, i32* %loop, align 4
+  br label %for.cond132
 
-for.end192:                                       ; preds = %for.cond127
-  store i32 0, i32* %igpu193, align 4
-  br label %for.cond194
+for.end197:                                       ; preds = %for.cond132
+  store i32 0, i32* %igpu198, align 4
+  br label %for.cond199
 
-for.cond194:                                      ; preds = %for.inc199, %for.end192
-  %193 = load i32, i32* %igpu193, align 4
-  %194 = load i32, i32* %ngpu, align 4
-  %cmp195 = icmp slt i32 %193, %194
-  br i1 %cmp195, label %for.body196, label %for.end201
+for.cond199:                                      ; preds = %for.inc204, %for.end197
+  %185 = load i32, i32* %igpu198, align 4
+  %186 = load i32, i32* %ngpu, align 4
+  %cmp200 = icmp slt i32 %185, %186
+  br i1 %cmp200, label %for.body201, label %for.end206
 
-for.body196:                                      ; preds = %for.cond194
-  %195 = load i32, i32* %igpu193, align 4
-  %call197 = call i32 @cudaSetDevice(i32 %195)
-  %call198 = call i32 @cudaDeviceSynchronize()
-  br label %for.inc199
+for.body201:                                      ; preds = %for.cond199
+  %187 = load i32, i32* %igpu198, align 4
+  %call202 = call i32 @cudaSetDevice(i32 %187)
+  %call203 = call i32 @cudaDeviceSynchronize()
+  br label %for.inc204
 
-for.inc199:                                       ; preds = %for.body196
-  %196 = load i32, i32* %igpu193, align 4
-  %inc200 = add nsw i32 %196, 1
-  store i32 %inc200, i32* %igpu193, align 4
-  br label %for.cond194
+for.inc204:                                       ; preds = %for.body201
+  %188 = load i32, i32* %igpu198, align 4
+  %inc205 = add nsw i32 %188, 1
+  store i32 %inc205, i32* %igpu198, align 4
+  br label %for.cond199
 
-for.end201:                                       ; preds = %for.cond194
-  %call202 = call i64 @clock() #10
-  store i64 %call202, i64* %t1, align 8
-  store i32 0, i32* %igpu203, align 4
-  br label %for.cond204
+for.end206:                                       ; preds = %for.cond199
+  %call207 = call i64 @clock() #10
+  store i64 %call207, i64* %t1, align 8
+  store i32 0, i32* %igpu208, align 4
+  br label %for.cond209
 
-for.cond204:                                      ; preds = %for.inc213, %for.end201
-  %197 = load i32, i32* %igpu203, align 4
-  %198 = load i32, i32* %ngpu, align 4
-  %cmp205 = icmp slt i32 %197, %198
-  br i1 %cmp205, label %for.body206, label %for.end215
+for.cond209:                                      ; preds = %for.inc219, %for.end206
+  %189 = load i32, i32* %igpu208, align 4
+  %190 = load i32, i32* %ngpu, align 4
+  %cmp210 = icmp slt i32 %189, %190
+  br i1 %cmp210, label %for.body211, label %for.end221
 
-for.body206:                                      ; preds = %for.cond204
-  %199 = load i32, i32* %gpu, align 4
-  %200 = load float*, float** %h_c, align 8
-  %201 = load i32*, i32** %offset, align 8
-  %202 = load i32, i32* %igpu203, align 4
-  %idxprom207 = sext i32 %202 to i64
-  %arrayidx208 = getelementptr inbounds i32, i32* %201, i64 %idxprom207
-  %203 = load i32, i32* %arrayidx208, align 4
-  %idx.ext209 = sext i32 %203 to i64
-  %add.ptr210 = getelementptr inbounds float, float* %200, i64 %idx.ext209
-  %204 = bitcast float* %add.ptr210 to i8*
-  %205 = load float**, float*** %d_c, align 8
-  %206 = load i32, i32* %igpu203, align 4
-  %idxprom211 = sext i32 %206 to i64
-  %arrayidx212 = getelementptr inbounds float*, float** %205, i64 %idxprom211
-  %207 = load float*, float** %arrayidx212, align 8
-  %208 = bitcast float* %207 to i8*
-  %209 = load i64, i64* %size, align 8
-  call void @_Z11cuda_memcpyiPvPKvm14cudaMemcpyKind(i32 %199, i8* %204, i8* %208, i64 %209, i32 2)
-  br label %for.inc213
+for.body211:                                      ; preds = %for.cond209
+  %191 = load float*, float** %h_c, align 8
+  %192 = load i32*, i32** %offset, align 8
+  %193 = load i32, i32* %igpu208, align 4
+  %idxprom212 = sext i32 %193 to i64
+  %arrayidx213 = getelementptr inbounds i32, i32* %192, i64 %idxprom212
+  %194 = load i32, i32* %arrayidx213, align 4
+  %idx.ext214 = sext i32 %194 to i64
+  %add.ptr215 = getelementptr inbounds float, float* %191, i64 %idx.ext214
+  %195 = bitcast float* %add.ptr215 to i8*
+  %196 = load float**, float*** %d_c, align 8
+  %197 = load i32, i32* %igpu208, align 4
+  %idxprom216 = sext i32 %197 to i64
+  %arrayidx217 = getelementptr inbounds float*, float** %196, i64 %idxprom216
+  %198 = load float*, float** %arrayidx217, align 8
+  %199 = bitcast float* %198 to i8*
+  %200 = load i64, i64* %size, align 8
+  %call218 = call i32 @cudaMemcpy(i8* %195, i8* %199, i64 %200, i32 2)
+  br label %for.inc219
 
-for.inc213:                                       ; preds = %for.body206
-  %210 = load i32, i32* %igpu203, align 4
-  %inc214 = add nsw i32 %210, 1
-  store i32 %inc214, i32* %igpu203, align 4
-  br label %for.cond204
+for.inc219:                                       ; preds = %for.body211
+  %201 = load i32, i32* %igpu208, align 4
+  %inc220 = add nsw i32 %201, 1
+  store i32 %inc220, i32* %igpu208, align 4
+  br label %for.cond209
 
-for.end215:                                       ; preds = %for.cond204
+for.end221:                                       ; preds = %for.cond209
   store double 0.000000e+00, double* %sum, align 8
-  store i32 0, i32* %i216, align 4
-  br label %for.cond217
+  store i32 0, i32* %i222, align 4
+  br label %for.cond223
 
-for.cond217:                                      ; preds = %for.inc224, %for.end215
-  %211 = load i32, i32* %i216, align 4
-  %212 = load i32, i32* %nvector, align 4
-  %cmp218 = icmp slt i32 %211, %212
-  br i1 %cmp218, label %for.body219, label %for.end226
+for.cond223:                                      ; preds = %for.inc230, %for.end221
+  %202 = load i32, i32* %i222, align 4
+  %203 = load i32, i32* %nvector, align 4
+  %cmp224 = icmp slt i32 %202, %203
+  br i1 %cmp224, label %for.body225, label %for.end232
 
-for.body219:                                      ; preds = %for.cond217
-  %213 = load float*, float** %h_c, align 8
-  %214 = load i32, i32* %i216, align 4
-  %idxprom220 = sext i32 %214 to i64
-  %arrayidx221 = getelementptr inbounds float, float* %213, i64 %idxprom220
-  %215 = load float, float* %arrayidx221, align 4
-  %conv222 = fpext float %215 to double
-  %216 = load double, double* %sum, align 8
-  %add223 = fadd contract double %216, %conv222
-  store double %add223, double* %sum, align 8
-  br label %for.inc224
+for.body225:                                      ; preds = %for.cond223
+  %204 = load float*, float** %h_c, align 8
+  %205 = load i32, i32* %i222, align 4
+  %idxprom226 = sext i32 %205 to i64
+  %arrayidx227 = getelementptr inbounds float, float* %204, i64 %idxprom226
+  %206 = load float, float* %arrayidx227, align 4
+  %conv228 = fpext float %206 to double
+  %207 = load double, double* %sum, align 8
+  %add229 = fadd contract double %207, %conv228
+  store double %add229, double* %sum, align 8
+  br label %for.inc230
 
-for.inc224:                                       ; preds = %for.body219
-  %217 = load i32, i32* %i216, align 4
-  %inc225 = add nsw i32 %217, 1
-  store i32 %inc225, i32* %i216, align 4
-  br label %for.cond217
+for.inc230:                                       ; preds = %for.body225
+  %208 = load i32, i32* %i222, align 4
+  %inc231 = add nsw i32 %208, 1
+  store i32 %inc231, i32* %i222, align 4
+  br label %for.cond223
 
-for.end226:                                       ; preds = %for.cond217
-  %218 = load i32, i32* %nvector, align 4
-  %conv227 = sitofp i32 %218 to double
-  %219 = load i32, i32* %nvector, align 4
-  %conv228 = sitofp i32 %219 to double
-  %mul229 = fmul contract double %conv227, %conv228
-  store double %mul229, double* %exact, align 8
-  %220 = load i64, i64* %t1, align 8
-  %221 = load i64, i64* %t0, align 8
-  %sub230 = sub nsw i64 %220, %221
-  %conv231 = sitofp i64 %sub230 to double
-  %div232 = fdiv double %conv231, 1.000000e+06
-  store double %div232, double* %sec, align 8
-  %222 = load i32, i32* %nvector, align 4
-  %223 = load i32, i32* %nloop, align 4
-  %224 = load double, double* %sum, align 8
-  %225 = load double, double* %exact, align 8
-  %226 = load i32, i32* %gpu, align 4
-  %tobool233 = icmp ne i32 %226, 0
-  br i1 %tobool233, label %cond.true, label %cond.false
+for.end232:                                       ; preds = %for.cond223
+  %209 = load i32, i32* %nvector, align 4
+  %conv233 = sitofp i32 %209 to double
+  %210 = load i32, i32* %nvector, align 4
+  %conv234 = sitofp i32 %210 to double
+  %mul235 = fmul contract double %conv233, %conv234
+  store double %mul235, double* %exact, align 8
+  %211 = load i64, i64* %t1, align 8
+  %212 = load i64, i64* %t0, align 8
+  %sub236 = sub nsw i64 %211, %212
+  %conv237 = sitofp i64 %sub236 to double
+  %div238 = fdiv double %conv237, 1.000000e+06
+  store double %div238, double* %sec, align 8
+  %213 = load i32, i32* %nvector, align 4
+  %214 = load i32, i32* %nloop, align 4
+  %215 = load double, double* %sum, align 8
+  %216 = load double, double* %exact, align 8
+  %217 = load i32, i32* %gpu, align 4
+  %tobool239 = icmp ne i32 %217, 0
+  br i1 %tobool239, label %cond.true, label %cond.false
 
-cond.true:                                        ; preds = %for.end226
+cond.true:                                        ; preds = %for.end232
   br label %cond.end
 
-cond.false:                                       ; preds = %for.end226
+cond.false:                                       ; preds = %for.end232
   br label %cond.end
 
 cond.end:                                         ; preds = %cond.false, %cond.true
   %cond-lvalue = phi [4 x i8]* [ @.str.9, %cond.true ], [ @.str.10, %cond.false ]
-  %arraydecay234 = getelementptr inbounds [4 x i8], [4 x i8]* %cond-lvalue, i64 0, i64 0
-  %227 = load double, double* %sec, align 8
-  %call235 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([41 x i8], [41 x i8]* @.str.8, i64 0, i64 0), i32 %222, i32 %223, double %224, double %225, i8* %arraydecay234, double %227)
-  store i32 0, i32* %igpu236, align 4
-  br label %for.cond237
-
-for.cond237:                                      ; preds = %for.inc246, %cond.end
-  %228 = load i32, i32* %igpu236, align 4
-  %229 = load i32, i32* %ngpu, align 4
-  %cmp238 = icmp slt i32 %228, %229
-  br i1 %cmp238, label %for.body239, label %for.end248
-
-for.body239:                                      ; preds = %for.cond237
-  %230 = load i32, i32* %gpu, align 4
-  %231 = load float**, float*** %d_a, align 8
-  %232 = load i32, i32* %igpu236, align 4
-  %idxprom240 = sext i32 %232 to i64
-  %arrayidx241 = getelementptr inbounds float*, float** %231, i64 %idxprom240
-  %233 = load float*, float** %arrayidx241, align 8
-  %234 = bitcast float* %233 to i8*
-  call void @_Z9cuda_freeiPv(i32 %230, i8* %234)
-  %235 = load i32, i32* %gpu, align 4
-  %236 = load float**, float*** %d_b, align 8
-  %237 = load i32, i32* %igpu236, align 4
-  %idxprom242 = sext i32 %237 to i64
-  %arrayidx243 = getelementptr inbounds float*, float** %236, i64 %idxprom242
-  %238 = load float*, float** %arrayidx243, align 8
-  %239 = bitcast float* %238 to i8*
-  call void @_Z9cuda_freeiPv(i32 %235, i8* %239)
-  %240 = load i32, i32* %gpu, align 4
-  %241 = load float**, float*** %d_c, align 8
-  %242 = load i32, i32* %igpu236, align 4
-  %idxprom244 = sext i32 %242 to i64
-  %arrayidx245 = getelementptr inbounds float*, float** %241, i64 %idxprom244
-  %243 = load float*, float** %arrayidx245, align 8
-  %244 = bitcast float* %243 to i8*
-  call void @_Z9cuda_freeiPv(i32 %240, i8* %244)
-  br label %for.inc246
-
-for.inc246:                                       ; preds = %for.body239
-  %245 = load i32, i32* %igpu236, align 4
-  %inc247 = add nsw i32 %245, 1
-  store i32 %inc247, i32* %igpu236, align 4
-  br label %for.cond237
-
-for.end248:                                       ; preds = %for.cond237
-  %246 = load float*, float** %h_a, align 8
-  %247 = bitcast float* %246 to i8*
-  call void @free(i8* %247) #10
-  %248 = load float*, float** %h_b, align 8
-  %249 = bitcast float* %248 to i8*
-  call void @free(i8* %249) #10
-  %250 = load float*, float** %h_c, align 8
-  %251 = bitcast float* %250 to i8*
-  call void @free(i8* %251) #10
-  %252 = load float**, float*** %d_a, align 8
-  %253 = bitcast float** %252 to i8*
-  call void @free(i8* %253) #10
-  %254 = load float**, float*** %d_b, align 8
-  %255 = bitcast float** %254 to i8*
-  call void @free(i8* %255) #10
-  %256 = load float**, float*** %d_c, align 8
-  %257 = bitcast float** %256 to i8*
-  call void @free(i8* %257) #10
-  %call249 = call i32 @cudaDeviceReset()
+  %arraydecay240 = getelementptr inbounds [4 x i8], [4 x i8]* %cond-lvalue, i64 0, i64 0
+  %218 = load double, double* %sec, align 8
+  %call241 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([41 x i8], [41 x i8]* @.str.8, i64 0, i64 0), i32 %213, i32 %214, double %215, double %216, i8* %arraydecay240, double %218)
+  %219 = load float*, float** %h_a, align 8
+  %220 = bitcast float* %219 to i8*
+  call void @free(i8* %220) #10
+  %221 = load float*, float** %h_b, align 8
+  %222 = bitcast float* %221 to i8*
+  call void @free(i8* %222) #10
+  %223 = load float*, float** %h_c, align 8
+  %224 = bitcast float* %223 to i8*
+  call void @free(i8* %224) #10
+  %225 = load float**, float*** %d_a, align 8
+  %226 = bitcast float** %225 to i8*
+  call void @free(i8* %226) #10
+  %227 = load float**, float*** %d_b, align 8
+  %228 = bitcast float** %227 to i8*
+  call void @free(i8* %228) #10
+  %229 = load float**, float*** %d_c, align 8
+  %230 = bitcast float** %229 to i8*
+  call void @free(i8* %230) #10
+  %call242 = call i32 @cudaDeviceReset()
   ret i32 0
 }
 
@@ -986,9 +933,9 @@ for.end:                                          ; preds = %for.cond
 
 declare dso_local i32 @cudaSetDevice(i32) #2
 
-declare dso_local void @_Z11cuda_mallociiPPvm(i32, i32, i8**, i64) #2
+declare dso_local i32 @cudaMalloc(i8**, i64) #2
 
-declare dso_local void @_Z11cuda_memcpyiPvPKvm14cudaMemcpyKind(i32, i8*, i8*, i64, i32) #2
+declare dso_local i32 @cudaMemcpy(i8*, i8*, i64, i32) #2
 
 declare dso_local i32 @cudaDeviceSynchronize() #2
 
@@ -1130,8 +1077,6 @@ for.end:                                          ; preds = %for.cond
   ret void
 }
 
-declare dso_local void @_Z9cuda_freeiPv(i32, i8*) #2
-
 ; Function Attrs: nounwind
 declare dso_local void @free(i8*) #4
 
@@ -1175,4 +1120,4 @@ attributes #10 = { nounwind }
 
 !0 = !{i32 2, !"SDK Version", [2 x i32] [i32 10, i32 1]}
 !1 = !{i32 1, !"wchar_size", i32 4}
-!2 = !{!"clang version 9.0.0 (https://github.com/llvm/llvm-project.git 9e441aee509f8a4d1c6a42b3da6ab9869e777051)"}
+!2 = !{!"clang version 9.0.0 (https://github.com/morimolymoly/llvm.git f7f3c2919a97198083f994fce16cd2b09010f77a)"}

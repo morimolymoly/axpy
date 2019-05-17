@@ -1,10 +1,18 @@
 #include <iostream>
 
+__attribute__((always_inline))
+__host__ __device__ void test()
+{
+  int a = 10 + 20;
+}
+
 __global__ void axpy(float a, float* x, float* y) {
+  test();
   y[threadIdx.x] = a * x[threadIdx.x];
 }
 
 int main(int argc, char* argv[]) {
+  test();
   const int kDataLen = 100000;
 
   float a = 2.0f;
